@@ -97,8 +97,8 @@ function HubPage() {
         {/* Game grid */}
         <section>
           <div className="mb-3 flex items-baseline justify-between">
-            <h2 className="font-display text-3xl text-foreground">
-              ESCOLHA O <span className="text-gradient-gold">JOGO</span>
+            <h2 className="font-display text-2xl sm:text-3xl text-foreground">
+              Escolha o <span className="text-gradient-blue">jogo</span>
             </h2>
             <p className="font-mono text-xs text-muted-foreground">6 jogos • 1 disponível</p>
           </div>
@@ -118,7 +118,7 @@ function HubPage() {
         <section>
           <div className="mb-3 flex items-baseline justify-between">
             <h2 className="font-display text-3xl text-foreground">{activeGame.title}</h2>
-            <code className="rounded bg-background/60 px-2 py-1 font-mono text-xs text-secondary">
+            <code className="rounded bg-muted px-2 py-1 font-mono text-xs text-primary">
               {activeGame.formula}
             </code>
           </div>

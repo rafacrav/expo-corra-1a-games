@@ -95,7 +95,7 @@ export function FigurinhasGame({
         />
         <button
           onClick={reset}
-          className="w-full rounded-md border border-border bg-background/40 px-3 py-2 font-display text-sm tracking-widest text-muted-foreground hover:border-destructive hover:text-destructive"
+          className="w-full rounded-md border border-border bg-muted px-3 py-2 font-display text-sm tracking-widest text-muted-foreground hover:border-destructive hover:text-destructive"
         >
           REINICIAR COLEÇÃO
         </button>

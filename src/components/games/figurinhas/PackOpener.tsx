@@ -32,11 +32,11 @@ export function PackOpener({
     <div className="flex flex-col items-center gap-4 rounded-xl border border-border bg-card p-4">
       <div className="flex w-full items-center justify-between">
         <div>
-          <p className="font-display text-xs tracking-widest text-secondary">PACOTES ABERTOS</p>
+          <p className="font-display text-xs tracking-widest text-primary">PACOTES ABERTOS</p>
           <p className="font-display text-3xl">{totalPacks}</p>
         </div>
         <div className="text-right">
-          <p className="font-display text-xs tracking-widest text-secondary">GASTO TOTAL</p>
+          <p className="font-display text-xs tracking-widest text-primary">GASTO TOTAL</p>
           <p className="font-display text-3xl text-gradient-gold">{formatBRL(totalSpent)}</p>
         </div>
       </div>

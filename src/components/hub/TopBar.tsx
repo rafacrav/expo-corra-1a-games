@@ -42,17 +42,17 @@ export function TopBar() {
   useEffect(() => setVisitorId(getVisitorId()), []);
 
   return (
-    <header className="relative z-10 border-b border-border bg-surface/70 backdrop-blur-xl">
-      <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-3 sm:px-6">
+    <header className="sticky top-0 z-20 border-b border-border bg-card/80 backdrop-blur-xl">
+      <div className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-3 sm:px-6">
         <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-md bg-primary text-primary-foreground shadow-glow-green">
-            <span className="font-display text-2xl leading-none">EC</span>
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-glow-green">
+            <span className="font-display text-lg font-bold leading-none">EC</span>
           </div>
           <div className="leading-tight">
-            <h1 className="font-display text-2xl text-foreground sm:text-3xl">
-              EXPO<span className="text-gradient-gold">CORRA</span> GAMES HUB
+            <h1 className="font-display text-base font-bold text-foreground sm:text-xl">
+              ExpoCorra <span className="text-gradient-blue">Games Hub</span>
             </h1>
-            <p className="text-xs uppercase tracking-widest text-muted-foreground">
+            <p className="text-[11px] text-muted-foreground">
               Matemática &amp; física que você joga
             </p>
           </div>
@@ -60,7 +60,7 @@ export function TopBar() {
 
         <div className="flex items-center gap-3">
           <div className="hidden text-right sm:block">
-            <p className="font-display text-sm text-secondary">Visitante</p>
+            <p className="font-display text-sm text-primary">Visitante</p>
             <p className="font-mono text-[10px] text-muted-foreground">
               {visitorId ? visitorId.slice(0, 13) + "…" : "—"}
             </p>
@@ -75,7 +75,7 @@ export function TopBar() {
           >
             {visitorId && <FauxQR value={visitorId} size={56} />}
             <span
-              className={`pointer-events-none absolute inset-0 rounded-md border-2 border-secondary transition-opacity ${
+              className={`pointer-events-none absolute inset-0 rounded-md border-2 border-primary transition-opacity ${
                 scanning ? "animate-pulse opacity-100" : "opacity-0 group-hover:opacity-60"
               }`}
             />

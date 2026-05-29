@@ -24,7 +24,7 @@ export function GameCard({
       onClick={onClick}
       disabled={!isReady}
       className={`group relative flex flex-col items-start gap-2 overflow-hidden rounded-xl border bg-card p-4 text-left transition-all
-        ${active ? "border-secondary shadow-glow-gold" : "border-border hover:border-primary"}
+        ${active ? "border-primary shadow-glow-gold" : "border-border hover:border-primary"}
         ${isReady ? "cursor-pointer hover:-translate-y-0.5" : "cursor-not-allowed opacity-60"}`}
     >
       <div
@@ -34,7 +34,7 @@ export function GameCard({
         style={{ background: isReady ? "var(--gradient-green)" : "var(--muted)" }}
       />
       <div className="relative flex w-full items-center justify-between">
-        <div className="flex h-10 w-10 items-center justify-center rounded-md bg-surface-2 text-secondary">
+        <div className="flex h-10 w-10 items-center justify-center rounded-md bg-surface-2 text-primary">
           {game.icon}
         </div>
         {!isReady && (
@@ -50,7 +50,7 @@ export function GameCard({
       </div>
       <h3 className="relative font-display text-xl leading-none text-foreground">{game.title}</h3>
       <p className="relative text-sm text-muted-foreground">{game.subtitle}</p>
-      <code className="relative mt-1 rounded bg-background/60 px-2 py-1 font-mono text-[11px] text-secondary">
+      <code className="relative mt-1 rounded bg-muted px-2 py-1 font-mono text-[11px] text-primary">
         {game.formula}
       </code>
     </button>

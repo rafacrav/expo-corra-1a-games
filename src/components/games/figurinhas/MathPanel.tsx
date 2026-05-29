@@ -75,9 +75,9 @@ function Block({
   accent?: boolean;
 }) {
   return (
-    <div className={`rounded-md border p-3 ${accent ? "border-secondary bg-secondary/5" : "border-border bg-background/40"}`}>
+    <div className={`rounded-md border p-3 ${accent ? "border-primary bg-primary/5" : "border-border bg-muted"}`}>
       <p className="text-[11px] uppercase tracking-widest text-muted-foreground">{label}</p>
-      <code className="block py-1 font-mono text-[11px] text-secondary">{formula}</code>
+      <code className="block py-1 font-mono text-[11px] text-primary">{formula}</code>
       <div className="flex items-baseline justify-between">
         <p className={`font-display text-2xl ${accent ? "text-gradient-gold" : "text-foreground"}`}>{value}</p>
         {hint && <p className="font-mono text-xs text-muted-foreground">{hint}</p>}
