@@ -42,17 +42,17 @@ export function TopBar() {
   useEffect(() => setVisitorId(getVisitorId()), []);
 
   return (
-    <header className="relative z-10 border-b border-border bg-surface/70 backdrop-blur-xl">
-      <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-3 sm:px-6">
+    <header className="sticky top-0 z-20 border-b border-border bg-card/80 backdrop-blur-xl">
+      <div className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-3 sm:px-6">
         <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-md bg-primary text-primary-foreground shadow-glow-green">
-            <span className="font-display text-2xl leading-none">EC</span>
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-glow-green">
+            <span className="font-display text-lg font-bold leading-none">EC</span>
           </div>
           <div className="leading-tight">
-            <h1 className="font-display text-2xl text-foreground sm:text-3xl">
-              EXPO<span className="text-gradient-gold">CORRA</span> GAMES HUB
+            <h1 className="font-display text-base font-bold text-foreground sm:text-xl">
+              ExpoCorra <span className="text-gradient-blue">Games Hub</span>
             </h1>
-            <p className="text-xs uppercase tracking-widest text-muted-foreground">
+            <p className="text-[11px] text-muted-foreground">
               Matemática &amp; física que você joga
             </p>
           </div>
