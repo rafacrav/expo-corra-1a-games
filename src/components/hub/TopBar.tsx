@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, type ReactElement } from "react";
 import { getVisitorId } from "@/lib/visitor";
 
 /** Tiny inline SVG QR that encodes the visitor UUID deterministically for visual flair.
@@ -22,7 +22,7 @@ function FauxQR({ value, size = 96 }: { value: string; size?: number }) {
   const isFinderArea = (x: number, y: number) =>
     (x < 8 && y < 8) || (x >= cells - 8 && y < 8) || (x < 8 && y >= cells - 8);
 
-  const rects: JSX.Element[] = [];
+  const rects: ReactElement[] = [];
   for (let y = 0; y < cells; y++)
     for (let x = 0; x < cells; x++) {
       const fill = isFinderArea(x, y) ? isFinder(x, y) : rng() > 0.5;
