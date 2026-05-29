@@ -5,6 +5,7 @@ import { TopBar } from "@/components/hub/TopBar";
 import { GameCard, type GameMeta } from "@/components/hub/GameCard";
 import { MathDiary, type DiaryEntry } from "@/components/hub/MathDiary";
 import { FigurinhasGame } from "@/components/games/figurinhas/FigurinhasGame";
+import { ParabolaGame } from "@/components/games/parabola/ParabolaGame";
 import { ComingSoon } from "@/components/games/ComingSoon";
 
 export const Route = createFileRoute("/")({
@@ -40,7 +41,7 @@ const GAMES: GameMeta[] = [
     title: "Parábola & MU",
     subtitle: "Cachorro pega a bola — projétil + movimento uniforme",
     formula: "y(t) = v₀sinθ·t − ½gt²",
-    status: "soon",
+    status: "ready",
     icon: <Target className="h-5 w-5" />,
   },
   {
@@ -100,7 +101,7 @@ function HubPage() {
             <h2 className="font-display text-2xl sm:text-3xl text-foreground">
               Escolha o <span className="text-gradient-blue">jogo</span>
             </h2>
-            <p className="font-mono text-xs text-muted-foreground">6 jogos • 1 disponível</p>
+            <p className="font-mono text-xs text-muted-foreground">6 jogos • 2 disponíveis</p>
           </div>
           <div className="grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-6">
             {GAMES.map((g) => (
@@ -124,6 +125,8 @@ function HubPage() {
           </div>
           {active === "figurinhas" ? (
             <FigurinhasGame pushDiary={pushDiary} />
+          ) : active === "parabola" ? (
+            <ParabolaGame pushDiary={pushDiary} />
           ) : (
             <ComingSoon title={activeGame.title} formula={activeGame.formula} />
           )}
