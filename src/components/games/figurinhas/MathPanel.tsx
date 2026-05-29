@@ -48,7 +48,7 @@ export function MathPanel({
       />
       <Block
         label="Custo esperado para completar"
-        formula="custo = pacotes esperados × R$ 4,00"
+        formula="custo = pacotes esperados × R$ 7,00"
         value={formatBRL(expCost)}
         accent
       />

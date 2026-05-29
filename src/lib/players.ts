@@ -68,16 +68,20 @@ const NAMES: ReadonlyArray<readonly [string, Player["position"], number, string]
   ["Dida", "GOL", 50, "Dida_(footballer)"],
 ];
 
+// Padrão Copa 2026: lendas douradas (apenas Neymar e Pelé)
+const GOLD_WIKIS = new Set(["Neymar", "Pelé"]);
+
 export const PLAYERS: Player[] = NAMES.map(([name, position, number, wiki], i) => ({
   id: i,
   name,
   position,
   number,
   wiki,
-  // Every 7th player is rare/foil (≈ 14%)
-  rare: i % 7 === 6,
+  rare: GOLD_WIKIS.has(wiki),
 }));
 
 export const TOTAL_PLAYERS = PLAYERS.length;
-export const PACK_SIZE = 5;
-export const PACK_PRICE_BRL = 4.0;
+export const TOTAL_RARE = PLAYERS.filter((p) => p.rare).length;
+// Padrão Copa 2026
+export const PACK_SIZE = 7;
+export const PACK_PRICE_BRL = 7.0;
