@@ -83,6 +83,7 @@ export function FigurinhasGame({
   };
 
   const collectedCount = Object.keys(state.collection).length;
+  const rareCollected = PLAYERS.filter((p) => p.rare && state.collection[p.id]).length;
 
   return (
     <div className="grid gap-4 lg:grid-cols-[320px_1fr_320px]">
@@ -92,6 +93,10 @@ export function FigurinhasGame({
           lastPack={lastPack}
           totalPacks={state.totalPacks}
           totalSpent={state.totalPacks * PACK_PRICE_BRL}
+          collectedCount={collectedCount}
+          rareCollected={rareCollected}
+          duplicates={state.duplicates}
+          totalStickers={state.totalStickers}
         />
         <button
           onClick={reset}
