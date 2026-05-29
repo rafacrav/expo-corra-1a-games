@@ -75,7 +75,7 @@ export function TopBar() {
           >
             {visitorId && <FauxQR value={visitorId} size={56} />}
             <span
-              className={`pointer-events-none absolute inset-0 rounded-md border-2 border-secondary transition-opacity ${
+              className={`pointer-events-none absolute inset-0 rounded-md border-2 border-primary transition-opacity ${
                 scanning ? "animate-pulse opacity-100" : "opacity-0 group-hover:opacity-60"
               }`}
             />

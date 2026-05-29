@@ -19,7 +19,7 @@ export function Album({
           {collectedCount}/{PLAYERS.length}
         </span>
       </div>
-      <div className="h-2 w-full overflow-hidden rounded-full bg-background/60">
+      <div className="h-2 w-full overflow-hidden rounded-full bg-muted">
         <div
           className="h-full transition-all duration-500"
           style={{ width: `${pct}%`, background: "var(--gradient-green)" }}

@@ -38,7 +38,7 @@ export function MathDiary({ entries }: { entries: DiaryEntry[] }) {
           {entries.map((e) => (
             <article
               key={e.id}
-              className="animate-pop-in min-w-[220px] shrink-0 rounded-md border border-border bg-background/60 p-2"
+              className="animate-pop-in min-w-[220px] shrink-0 rounded-md border border-border bg-muted p-2"
             >
               <p className="font-display text-[10px] tracking-widest text-primary">{e.game}</p>
               <code className="block font-mono text-xs text-primary">{e.formula}</code>

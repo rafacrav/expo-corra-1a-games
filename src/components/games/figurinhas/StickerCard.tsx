@@ -21,7 +21,7 @@ export function StickerCard({
   if (!owned) {
     return (
       <div
-        className={`${dims} flex items-center justify-center rounded-md border-2 border-dashed border-border bg-background/40`}
+        className={`${dims} flex items-center justify-center rounded-md border-2 border-dashed border-border bg-muted`}
         aria-label={`Figurinha não coletada nº ${player.number}`}
       >
         <span className="font-display text-xl text-muted-foreground/50">
