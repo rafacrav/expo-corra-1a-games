@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { PACK_PRICE_BRL, PACK_SIZE, PLAYERS, TOTAL_PLAYERS, TOTAL_RARE, type Player } from "@/lib/players";
 import { formatBRL, formatPct } from "@/lib/figurinhas-math";
-import { StickerCard } from "./StickerCard";
+import { PackRevealModal } from "./PackRevealModal";
 import stickerPackImg from "@/assets/sticker-pack.png";
 
 export function PackOpener({
@@ -87,11 +87,7 @@ export function PackOpener({
       </p>
 
       {revealed && (
-        <div className="grid w-full grid-cols-7 gap-1.5">
-          {revealed.map((p, i) => (
-            <StickerCard key={`${p.id}-${i}`} player={p} owned size="sm" flipDelay={i * 100} />
-          ))}
-        </div>
+        <PackRevealModal pack={revealed} onClose={() => setRevealed(null)} />
       )}
     </div>
   );
