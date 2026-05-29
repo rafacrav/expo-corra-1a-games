@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { PACK_PRICE_BRL, PACK_SIZE, PLAYERS, type Player } from "@/lib/players";
-import { formatBRL } from "@/lib/figurinhas-math";
+import { PACK_PRICE_BRL, PACK_SIZE, PLAYERS, TOTAL_PLAYERS, TOTAL_RARE, type Player } from "@/lib/players";
+import { formatBRL, formatPct } from "@/lib/figurinhas-math";
 import { StickerCard } from "./StickerCard";
 import stickerPackImg from "@/assets/sticker-pack.png";
 
@@ -9,11 +9,19 @@ export function PackOpener({
   lastPack,
   totalPacks,
   totalSpent,
+  collectedCount,
+  rareCollected,
+  duplicates,
+  totalStickers,
 }: {
   onOpen: () => Player[];
   lastPack: Player[] | null;
   totalPacks: number;
   totalSpent: number;
+  collectedCount: number;
+  rareCollected: number;
+  duplicates: number;
+  totalStickers: number;
 }) {
   const [revealed, setRevealed] = useState<Player[] | null>(lastPack);
   const [opening, setOpening] = useState(false);
@@ -28,23 +36,33 @@ export function PackOpener({
     }, 600);
   };
 
+  const completion = collectedCount / TOTAL_PLAYERS;
+  const repeatRate = totalStickers > 0 ? duplicates / totalStickers : 0;
+
   return (
     <div className="flex flex-col items-center gap-4 rounded-xl border border-border bg-card p-4">
-      <div className="flex w-full items-center justify-between">
-        <div>
-          <p className="font-display text-xs tracking-widest text-primary">PACOTES ABERTOS</p>
-          <p className="font-display text-3xl">{totalPacks}</p>
-        </div>
-        <div className="text-right">
-          <p className="font-display text-xs tracking-widest text-primary">GASTO TOTAL</p>
-          <p className="font-display text-3xl text-gradient-gold">{formatBRL(totalSpent)}</p>
+      {/* Live stats — atualizam em tempo real a cada pacote */}
+      <div className="grid w-full grid-cols-2 gap-2">
+        <Stat label="COLETADAS" value={`${collectedCount}/${TOTAL_PLAYERS}`} hint={formatPct(completion)} />
+        <Stat label="LENDAS DOURADAS" value={`${rareCollected}/${TOTAL_RARE}`} accent />
+        <Stat label="PACOTES" value={String(totalPacks)} hint={`${totalStickers} figs`} />
+        <Stat label="GASTO" value={formatBRL(totalSpent)} hint={`${formatPct(repeatRate)} rep.`} />
+      </div>
+
+      {/* Barra de progresso ao vivo */}
+      <div className="w-full">
+        <div className="h-2 w-full overflow-hidden rounded-full bg-muted">
+          <div
+            className="h-full bg-primary transition-all duration-500"
+            style={{ width: `${completion * 100}%` }}
+          />
         </div>
       </div>
 
       <div className="relative flex h-44 w-full items-center justify-center">
         <img
           src={stickerPackImg}
-          alt="Pacote de figurinhas"
+          alt="Pacote de figurinhas Copa 2026"
           width={176}
           height={176}
           loading="lazy"
@@ -52,6 +70,9 @@ export function PackOpener({
             opening ? "scale-110 rotate-12 opacity-30" : "hover:rotate-3"
           }`}
         />
+        <span className="pointer-events-none absolute left-2 top-2 rounded-full bg-primary px-2 py-0.5 font-display text-[10px] tracking-widest text-primary-foreground">
+          COPA 2026
+        </span>
       </div>
 
       <button
@@ -66,12 +87,24 @@ export function PackOpener({
       </p>
 
       {revealed && (
-        <div className="grid w-full grid-cols-5 gap-2">
+        <div className="grid w-full grid-cols-7 gap-1.5">
           {revealed.map((p, i) => (
-            <StickerCard key={`${p.id}-${i}`} player={p} owned size="sm" flipDelay={i * 120} />
+            <StickerCard key={`${p.id}-${i}`} player={p} owned size="sm" flipDelay={i * 100} />
           ))}
         </div>
       )}
+    </div>
+  );
+}
+
+function Stat({ label, value, hint, accent }: { label: string; value: string; hint?: string; accent?: boolean }) {
+  return (
+    <div className={`rounded-lg border p-2 ${accent ? "border-gold bg-gold/5" : "border-border bg-muted"}`}>
+      <p className="text-[10px] uppercase tracking-widest text-muted-foreground">{label}</p>
+      <p className={`font-display text-xl leading-tight ${accent ? "text-gradient-gold" : "text-foreground"}`}>
+        {value}
+      </p>
+      {hint && <p className="text-[10px] text-muted-foreground">{hint}</p>}
     </div>
   );
 }
