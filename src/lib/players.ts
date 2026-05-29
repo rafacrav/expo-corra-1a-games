@@ -4,40 +4,76 @@ export type Player = {
   position: "GOL" | "ZAG" | "LAT" | "VOL" | "MEI" | "ATA";
   number: number;
   rare: boolean; // foil sticker
+  wiki: string; // Wikipedia article title (en.wikipedia.org) for photo lookup
 };
 
 // 50 stylized Brazil-themed squad — mix of real legends and recent stars
-const NAMES = [
+// wiki = exact Wikipedia (EN) article title — used to fetch real player photo
+const NAMES: ReadonlyArray<readonly [string, Player["position"], number, string]> = [
   // Goleiros
-  ["Alisson", "GOL", 1], ["Ederson", "GOL", 23], ["Weverton", "GOL", 12],
+  ["Alisson", "GOL", 1, "Alisson"],
+  ["Ederson", "GOL", 23, "Ederson_(footballer,_born_1993)"],
+  ["Weverton", "GOL", 12, "Weverton"],
   // Zagueiros
-  ["Marquinhos", "ZAG", 4], ["Thiago Silva", "ZAG", 3], ["Éder Militão", "ZAG", 2],
-  ["Bremer", "ZAG", 14], ["Gabriel Magalhães", "ZAG", 22], ["Beraldo", "ZAG", 24],
+  ["Marquinhos", "ZAG", 4, "Marquinhos"],
+  ["Thiago Silva", "ZAG", 3, "Thiago_Silva"],
+  ["Éder Militão", "ZAG", 2, "Éder_Militão"],
+  ["Bremer", "ZAG", 14, "Bremer_(footballer)"],
+  ["Gabriel Magalhães", "ZAG", 22, "Gabriel_Magalhães"],
+  ["Lucas Beraldo", "ZAG", 24, "Lucas_Beraldo"],
   // Laterais
-  ["Danilo", "LAT", 13], ["Alex Sandro", "LAT", 6], ["Daniel Alves", "LAT", 17],
-  ["Alex Telles", "LAT", 16], ["Vanderson", "LAT", 25], ["Yan Couto", "LAT", 21],
+  ["Danilo", "LAT", 13, "Danilo_(footballer,_born_1991)"],
+  ["Alex Sandro", "LAT", 6, "Alex_Sandro"],
+  ["Dani Alves", "LAT", 17, "Dani_Alves"],
+  ["Alex Telles", "LAT", 16, "Alex_Telles"],
+  ["Vanderson", "LAT", 25, "Vanderson_(footballer,_born_2001)"],
+  ["Yan Couto", "LAT", 21, "Yan_Couto"],
   // Volantes / Meias
-  ["Casemiro", "VOL", 5], ["Fabinho", "VOL", 18], ["Bruno Guimarães", "VOL", 8],
-  ["Fred", "VOL", 26], ["André", "VOL", 15], ["João Gomes", "VOL", 27],
-  ["Lucas Paquetá", "MEI", 7], ["Rodrygo", "MEI", 9], ["Raphinha", "MEI", 11],
-  ["Andreas Pereira", "MEI", 28], ["Everton Ribeiro", "MEI", 19],
+  ["Casemiro", "VOL", 5, "Casemiro"],
+  ["Fabinho", "VOL", 18, "Fabinho_(footballer,_born_1993)"],
+  ["Bruno Guimarães", "VOL", 8, "Bruno_Guimarães"],
+  ["Fred", "VOL", 26, "Fred_(footballer,_born_1993)"],
+  ["André", "VOL", 15, "André_(footballer,_born_2001)"],
+  ["João Gomes", "VOL", 27, "João_Gomes_(footballer,_born_2001)"],
+  ["Lucas Paquetá", "MEI", 7, "Lucas_Paquetá"],
+  ["Rodrygo", "MEI", 9, "Rodrygo"],
+  ["Raphinha", "MEI", 11, "Raphinha"],
+  ["Andreas Pereira", "MEI", 28, "Andreas_Pereira"],
+  ["Everton Ribeiro", "MEI", 19, "Everton_Ribeiro"],
   // Atacantes
-  ["Neymar Jr.", "ATA", 10], ["Vinícius Jr.", "ATA", 20], ["Richarlison", "ATA", 29],
-  ["Gabriel Jesus", "ATA", 30], ["Antony", "ATA", 31], ["Pedro", "ATA", 32],
-  ["Gabriel Martinelli", "ATA", 33], ["Endrick", "ATA", 34], ["Estêvão", "ATA", 35],
+  ["Neymar Jr.", "ATA", 10, "Neymar"],
+  ["Vinícius Jr.", "ATA", 20, "Vinícius_Júnior"],
+  ["Richarlison", "ATA", 29, "Richarlison"],
+  ["Gabriel Jesus", "ATA", 30, "Gabriel_Jesus"],
+  ["Antony", "ATA", 31, "Antony_(footballer)"],
+  ["Pedro", "ATA", 32, "Pedro_(footballer,_born_1997)"],
+  ["Gabriel Martinelli", "ATA", 33, "Gabriel_Martinelli"],
+  ["Endrick", "ATA", 34, "Endrick"],
+  ["Estêvão", "ATA", 35, "Estêvão_Willian"],
   // Lendas
-  ["Pelé", "ATA", 36], ["Romário", "ATA", 37], ["Ronaldo Fenômeno", "ATA", 38],
-  ["Ronaldinho Gaúcho", "MEI", 39], ["Rivaldo", "MEI", 40], ["Kaká", "MEI", 41],
-  ["Roberto Carlos", "LAT", 42], ["Cafú", "LAT", 43], ["Sócrates", "MEI", 44],
-  ["Zico", "MEI", 45], ["Garrincha", "ATA", 46], ["Bebeto", "ATA", 47],
-  ["Tostão", "ATA", 48], ["Falcão", "MEI", 49], ["Dida", "GOL", 50],
-] as const;
+  ["Pelé", "ATA", 36, "Pelé"],
+  ["Romário", "ATA", 37, "Romário"],
+  ["Ronaldo Fenômeno", "ATA", 38, "Ronaldo_(Brazilian_footballer)"],
+  ["Ronaldinho Gaúcho", "MEI", 39, "Ronaldinho"],
+  ["Rivaldo", "MEI", 40, "Rivaldo"],
+  ["Kaká", "MEI", 41, "Kaká"],
+  ["Roberto Carlos", "LAT", 42, "Roberto_Carlos_(footballer)"],
+  ["Cafú", "LAT", 43, "Cafu"],
+  ["Sócrates", "MEI", 44, "Sócrates_(footballer)"],
+  ["Zico", "MEI", 45, "Zico"],
+  ["Garrincha", "ATA", 46, "Garrincha"],
+  ["Bebeto", "ATA", 47, "Bebeto"],
+  ["Tostão", "ATA", 48, "Tostão"],
+  ["Falcão", "MEI", 49, "Paulo_Roberto_Falcão"],
+  ["Dida", "GOL", 50, "Dida_(footballer)"],
+];
 
-export const PLAYERS: Player[] = NAMES.map(([name, position, number], i) => ({
+export const PLAYERS: Player[] = NAMES.map(([name, position, number, wiki], i) => ({
   id: i,
-  name: name as string,
-  position: position as Player["position"],
-  number: number as number,
+  name,
+  position,
+  number,
+  wiki,
   // Every 7th player is rare/foil (≈ 14%)
   rare: i % 7 === 6,
 }));
