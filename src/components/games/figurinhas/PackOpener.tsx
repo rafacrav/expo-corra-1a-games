@@ -87,11 +87,7 @@ export function PackOpener({
       </p>
 
       {revealed && (
-        <div className="grid w-full grid-cols-7 gap-1.5">
-          {revealed.map((p, i) => (
-            <StickerCard key={`${p.id}-${i}`} player={p} owned size="sm" flipDelay={i * 100} />
-          ))}
-        </div>
+        <PackRevealModal pack={revealed} onClose={() => setRevealed(null)} />
       )}
     </div>
   );
