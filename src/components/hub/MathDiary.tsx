@@ -18,7 +18,7 @@ export function MathDiary({ entries }: { entries: DiaryEntry[] }) {
     <section className="relative z-10 border-t border-border bg-surface/70 backdrop-blur-xl">
       <div className="mx-auto flex max-w-7xl flex-col gap-2 px-4 py-3 sm:px-6">
         <div className="flex items-center justify-between">
-          <h4 className="font-display text-sm tracking-widest text-secondary">
+          <h4 className="font-display text-sm tracking-widest text-primary">
             DIÁRIO MATEMÁTICO • TEMPO REAL
           </h4>
           <span className="font-mono text-[10px] text-muted-foreground">
@@ -41,7 +41,7 @@ export function MathDiary({ entries }: { entries: DiaryEntry[] }) {
               className="animate-pop-in min-w-[220px] shrink-0 rounded-md border border-border bg-background/60 p-2"
             >
               <p className="font-display text-[10px] tracking-widest text-primary">{e.game}</p>
-              <code className="block font-mono text-xs text-secondary">{e.formula}</code>
+              <code className="block font-mono text-xs text-primary">{e.formula}</code>
               <p className="mt-1 text-[11px] text-muted-foreground">{e.detail}</p>
             </article>
           ))}

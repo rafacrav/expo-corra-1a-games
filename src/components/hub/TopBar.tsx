@@ -60,7 +60,7 @@ export function TopBar() {
 
         <div className="flex items-center gap-3">
           <div className="hidden text-right sm:block">
-            <p className="font-display text-sm text-secondary">Visitante</p>
+            <p className="font-display text-sm text-primary">Visitante</p>
             <p className="font-mono text-[10px] text-muted-foreground">
               {visitorId ? visitorId.slice(0, 13) + "…" : "—"}
             </p>

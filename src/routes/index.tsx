@@ -118,7 +118,7 @@ function HubPage() {
         <section>
           <div className="mb-3 flex items-baseline justify-between">
             <h2 className="font-display text-3xl text-foreground">{activeGame.title}</h2>
-            <code className="rounded bg-background/60 px-2 py-1 font-mono text-xs text-secondary">
+            <code className="rounded bg-background/60 px-2 py-1 font-mono text-xs text-primary">
               {activeGame.formula}
             </code>
           </div>

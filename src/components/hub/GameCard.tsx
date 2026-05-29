@@ -34,7 +34,7 @@ export function GameCard({
         style={{ background: isReady ? "var(--gradient-green)" : "var(--muted)" }}
       />
       <div className="relative flex w-full items-center justify-between">
-        <div className="flex h-10 w-10 items-center justify-center rounded-md bg-surface-2 text-secondary">
+        <div className="flex h-10 w-10 items-center justify-center rounded-md bg-surface-2 text-primary">
           {game.icon}
         </div>
         {!isReady && (
@@ -50,7 +50,7 @@ export function GameCard({
       </div>
       <h3 className="relative font-display text-xl leading-none text-foreground">{game.title}</h3>
       <p className="relative text-sm text-muted-foreground">{game.subtitle}</p>
-      <code className="relative mt-1 rounded bg-background/60 px-2 py-1 font-mono text-[11px] text-secondary">
+      <code className="relative mt-1 rounded bg-background/60 px-2 py-1 font-mono text-[11px] text-primary">
         {game.formula}
       </code>
     </button>

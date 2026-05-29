@@ -69,7 +69,7 @@ export function PlayerModal({
 
         <div className="flex flex-col gap-3">
           <div>
-            <p className="font-display text-xs tracking-widest text-secondary">
+            <p className="font-display text-xs tracking-widest text-primary">
               {player.position} • CAMISA {player.number}
               {player.rare && (
                 <span className="ml-2 rounded bg-gradient-gold px-2 py-0.5 text-background">
@@ -103,7 +103,7 @@ function Stat({ label, value }: { label: string; value: string }) {
   return (
     <div className="rounded-md border border-border bg-background/40 p-2">
       <p className="text-[10px] uppercase tracking-widest text-muted-foreground">{label}</p>
-      <p className="font-display text-xl text-secondary">{value}</p>
+      <p className="font-display text-xl text-primary">{value}</p>
     </div>
   );
 }

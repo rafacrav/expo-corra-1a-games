@@ -15,7 +15,7 @@ export function Album({
     <div className="flex flex-col gap-3 rounded-xl border border-border bg-card p-4">
       <div className="flex items-center justify-between">
         <h3 className="font-display text-2xl">Álbum da Copa</h3>
-        <span className="font-display text-secondary">
+        <span className="font-display text-primary">
           {collectedCount}/{PLAYERS.length}
         </span>
       </div>
