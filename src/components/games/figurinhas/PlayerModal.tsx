@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
-import { useServerFn } from "@tanstack/react-start";
 import type { Player } from "@/lib/players";
-import { describePlayer } from "@/lib/ai.functions";
+import { getPlayerPhoto } from "@/lib/player-photos";
 import { StickerCard } from "./StickerCard";
 
 export function PlayerModal({
@@ -13,29 +12,17 @@ export function PlayerModal({
   count: number;
   onClose: () => void;
 }) {
-  const ai = useServerFn(describePlayer);
-  const [desc, setDesc] = useState<string>("Gerando descrição com IA…");
-  const [error, setError] = useState<string | null>(null);
+  const [photo, setPhoto] = useState<string | null>(null);
 
   useEffect(() => {
     let cancelled = false;
-    setDesc("Gerando descrição com IA…");
-    setError(null);
-    ai({ data: { name: player.name, position: player.position, number: player.number } })
-      .then((r) => {
-        if (cancelled) return;
-        setDesc(r.description);
-        if (r.error) setError(r.error);
-      })
-      .catch((e) => {
-        if (cancelled) return;
-        setDesc(`${player.name} — ${player.position}, camisa ${player.number}.`);
-        setError(e instanceof Error ? e.message : "Falha na IA");
-      });
+    getPlayerPhoto(player.wiki).then((src) => {
+      if (!cancelled) setPhoto(src);
+    });
     return () => {
       cancelled = true;
     };
-  }, [player.id, ai, player.name, player.position, player.number]);
+  }, [player.wiki]);
 
   // ESC close
   useEffect(() => {
@@ -49,7 +36,7 @@ export function PlayerModal({
       role="dialog"
       aria-modal="true"
       onClick={onClose}
-      className="fixed inset-0 z-50 flex items-center justify-center bg-muted p-4 backdrop-blur-sm"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-muted/80 p-4 backdrop-blur-sm"
     >
       <div
         onClick={(e) => e.stopPropagation()}
@@ -80,13 +67,28 @@ export function PlayerModal({
             <h2 className="font-display text-4xl text-foreground">{player.name}</h2>
           </div>
 
-          <div className="rounded-md border border-border bg-muted p-3">
-            <p className="font-display text-xs tracking-widest text-primary">DESCRIÇÃO (IA)</p>
-            <p className="mt-1 text-sm leading-relaxed text-foreground">{desc}</p>
-            {error && (
-              <p className="mt-2 text-xs text-destructive">⚠ {error}</p>
-            )}
-          </div>
+          {photo ? (
+            <a
+              href={`https://en.wikipedia.org/wiki/${player.wiki}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="block overflow-hidden rounded-md border border-border bg-muted"
+              title="Foto via Wikipedia"
+            >
+              <img
+                src={photo}
+                alt={player.name}
+                className="h-56 w-full object-cover object-top"
+              />
+              <p className="px-2 py-1 text-[10px] uppercase tracking-widest text-muted-foreground">
+                Foto: Wikipedia
+              </p>
+            </a>
+          ) : (
+            <div className="flex h-32 items-center justify-center rounded-md border border-dashed border-border bg-muted text-xs text-muted-foreground">
+              Foto indisponível
+            </div>
+          )}
 
           <div className="grid grid-cols-3 gap-2 text-center">
             <Stat label="Cópias" value={`×${count}`} />
