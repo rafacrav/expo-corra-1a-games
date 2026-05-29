@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { PACK_PRICE_BRL, PACK_SIZE, PLAYERS, TOTAL_PLAYERS, TOTAL_RARE, type Player } from "@/lib/players";
 import { formatBRL, formatPct } from "@/lib/figurinhas-math";
-import { StickerCard } from "./StickerCard";
+import { PackRevealModal } from "./PackRevealModal";
 import stickerPackImg from "@/assets/sticker-pack.png";
 
 export function PackOpener({
