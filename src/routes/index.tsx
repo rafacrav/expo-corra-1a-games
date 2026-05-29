@@ -41,7 +41,7 @@ const GAMES: GameMeta[] = [
     title: "Parábola & MU",
     subtitle: "Cachorro pega a bola — projétil + movimento uniforme",
     formula: "y(t) = v₀sinθ·t − ½gt²",
-    status: "soon",
+    status: "ready",
     icon: <Target className="h-5 w-5" />,
   },
   {
@@ -125,6 +125,8 @@ function HubPage() {
           </div>
           {active === "figurinhas" ? (
             <FigurinhasGame pushDiary={pushDiary} />
+          ) : active === "parabola" ? (
+            <ParabolaGame pushDiary={pushDiary} />
           ) : (
             <ComingSoon title={activeGame.title} formula={activeGame.formula} />
           )}
