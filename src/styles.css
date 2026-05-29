@@ -4,11 +4,11 @@
 
 @custom-variant dark (&:is(.dark *));
 
-/* ExpoCorra Games Hub — Brazil neon aesthetic */
+/* ExpoCorra Games Hub — Clean white & blue, mobile-first */
 
 @theme inline {
-  --font-display: "Bebas Neue", system-ui, sans-serif;
-  --font-sans: "Barlow Condensed", system-ui, sans-serif;
+  --font-display: "Inter", system-ui, sans-serif;
+  --font-sans: "Inter", system-ui, sans-serif;
 
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
@@ -41,47 +41,46 @@
 }
 
 :root {
-  --radius: 0.5rem;
+  --radius: 0.875rem;
 
-  /* Brazil neon palette */
-  --background: oklch(0.16 0.04 145);        /* #050e05-ish deep green-black */
-  --foreground: oklch(0.97 0.02 110);
-  --surface: oklch(0.21 0.05 145);
-  --surface-2: oklch(0.27 0.06 145);
+  /* Clean white & blue palette */
+  --background: oklch(0.99 0.005 250);
+  --foreground: oklch(0.22 0.04 255);
+  --surface: oklch(0.985 0.008 250);
+  --surface-2: oklch(0.96 0.012 250);
 
-  --card: oklch(0.22 0.06 145);
-  --card-foreground: oklch(0.97 0.02 110);
-  --popover: oklch(0.22 0.06 145);
-  --popover-foreground: oklch(0.97 0.02 110);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.22 0.04 255);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.22 0.04 255);
 
-  --primary: oklch(0.66 0.21 145);           /* #009c3b */
-  --primary-foreground: oklch(0.12 0.04 145);
+  --primary: oklch(0.58 0.18 255);
+  --primary-foreground: oklch(0.99 0.005 250);
 
-  --secondary: oklch(0.88 0.19 95);          /* #ffdf00 */
-  --secondary-foreground: oklch(0.12 0.04 145);
+  --secondary: oklch(0.95 0.02 250);
+  --secondary-foreground: oklch(0.32 0.06 255);
 
-  --gold: oklch(0.85 0.18 90);
+  --gold: oklch(0.72 0.16 80);
 
-  --muted: oklch(0.28 0.04 145);
-  --muted-foreground: oklch(0.75 0.03 120);
+  --muted: oklch(0.96 0.01 250);
+  --muted-foreground: oklch(0.5 0.03 255);
 
-  --accent: oklch(0.88 0.19 95);
-  --accent-foreground: oklch(0.12 0.04 145);
+  --accent: oklch(0.92 0.05 250);
+  --accent-foreground: oklch(0.32 0.1 255);
 
-  --destructive: oklch(0.62 0.24 25);
-  --destructive-foreground: oklch(0.98 0 0);
+  --destructive: oklch(0.62 0.22 25);
+  --destructive-foreground: oklch(0.99 0 0);
 
-  --border: oklch(0.34 0.05 145);
-  --input: oklch(0.28 0.04 145);
-  --ring: oklch(0.66 0.21 145);
+  --border: oklch(0.92 0.012 250);
+  --input: oklch(0.94 0.012 250);
+  --ring: oklch(0.58 0.18 255);
 
-  /* Gradients & shadows */
-  --gradient-pitch: radial-gradient(ellipse at top, oklch(0.32 0.12 145) 0%, oklch(0.16 0.04 145) 60%);
-  --gradient-gold: linear-gradient(135deg, oklch(0.88 0.19 95), oklch(0.78 0.21 75));
-  --gradient-green: linear-gradient(135deg, oklch(0.66 0.21 145), oklch(0.45 0.18 150));
-  --shadow-glow-green: 0 0 32px -4px oklch(0.66 0.21 145 / 0.55);
-  --shadow-glow-gold: 0 0 40px -4px oklch(0.85 0.18 90 / 0.7);
-  --shadow-card: 0 8px 24px -8px oklch(0 0 0 / 0.6);
+  --gradient-pitch: linear-gradient(180deg, oklch(0.99 0.008 250) 0%, oklch(0.96 0.018 250) 100%);
+  --gradient-gold: linear-gradient(135deg, oklch(0.82 0.14 85), oklch(0.7 0.16 70));
+  --gradient-green: linear-gradient(135deg, oklch(0.62 0.18 255), oklch(0.5 0.2 260));
+  --shadow-glow-green: 0 8px 28px -10px oklch(0.58 0.18 255 / 0.45);
+  --shadow-glow-gold: 0 8px 28px -10px oklch(0.75 0.16 80 / 0.55);
+  --shadow-card: 0 1px 2px oklch(0.4 0.05 255 / 0.04), 0 8px 24px -12px oklch(0.4 0.05 255 / 0.12);
 }
 
 @layer base {
@@ -92,38 +91,35 @@
     background-attachment: fixed;
     color: var(--color-foreground);
     font-family: var(--font-sans);
-    font-weight: 500;
-    letter-spacing: 0.01em;
+    font-weight: 400;
+    letter-spacing: -0.005em;
     min-height: 100dvh;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
 
   h1, h2, h3, h4, .font-display {
     font-family: var(--font-display);
-    letter-spacing: 0.04em;
-    font-weight: 400;
+    letter-spacing: -0.022em;
+    font-weight: 700;
+    color: var(--foreground);
   }
 
-  /* Pitch lines overlay */
-  body::before {
-    content: "";
-    position: fixed;
-    inset: 0;
-    pointer-events: none;
-    background-image:
-      linear-gradient(oklch(0.66 0.21 145 / 0.04) 1px, transparent 1px),
-      linear-gradient(90deg, oklch(0.66 0.21 145 / 0.04) 1px, transparent 1px);
-    background-size: 48px 48px;
-    z-index: 0;
-  }
-
-  ::-webkit-scrollbar { width: 10px; height: 10px; }
-  ::-webkit-scrollbar-track { background: var(--surface); }
-  ::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 6px; }
+  ::-webkit-scrollbar { width: 8px; height: 8px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: oklch(0.85 0.02 250); border-radius: 6px; }
+  ::-webkit-scrollbar-thumb:hover { background: oklch(0.75 0.04 250); }
 }
 
 @layer utilities {
   .text-gradient-gold {
     background: var(--gradient-gold);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .text-gradient-blue {
+    background: var(--gradient-green);
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
@@ -143,9 +139,9 @@
     inset: -50%;
     background: linear-gradient(115deg,
       transparent 30%,
-      oklch(1 0 0 / 0.35) 45%,
-      oklch(1 0 0 / 0.65) 50%,
-      oklch(1 0 0 / 0.35) 55%,
+      oklch(1 0 0 / 0.5) 45%,
+      oklch(1 0 0 / 0.8) 50%,
+      oklch(1 0 0 / 0.5) 55%,
       transparent 70%);
     transform: translateX(-100%);
     animation: shine 3.5s ease-in-out infinite;
