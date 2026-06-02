@@ -73,15 +73,31 @@ export function OperadorGame({
   const [picked, setPicked] = useState<Op | null>(null);
   const [score, setScore] = useState({ acertos: 0, erros: 0 });
   const [reveal, setReveal] = useState(false);
+  const [streak, setStreak] = useState(0);
+  const [bestStreak, setBestStreak] = useState(0);
+  const [startedAt, setStartedAt] = useState<number>(() => Date.now());
+  const [now, setNow] = useState<number>(() => Date.now());
+  const [lastTime, setLastTime] = useState<number | null>(null);
 
   const next = useCallback(() => {
     setPuzzle(generate());
     setPicked(null);
     setReveal(false);
+    setStartedAt(Date.now());
+    setNow(Date.now());
   }, []);
+
+  // Timer tick while answering
+  useEffect(() => {
+    if (reveal) return;
+    const id = window.setInterval(() => setNow(Date.now()), 100);
+    return () => window.clearInterval(id);
+  }, [reveal, puzzle]);
 
   const choose = (op: Op) => {
     if (reveal) return;
+    const elapsed = (Date.now() - startedAt) / 1000;
+    setLastTime(elapsed);
     setPicked(op);
     setReveal(true);
     const ok = op === puzzle.op;
@@ -89,10 +105,15 @@ export function OperadorGame({
       acertos: s.acertos + (ok ? 1 : 0),
       erros: s.erros + (ok ? 0 : 1),
     }));
+    setStreak((s) => {
+      const ns = ok ? s + 1 : 0;
+      setBestStreak((b) => Math.max(b, ns));
+      return ns;
+    });
     pushDiary({
       game: "Operador",
       formula: `${puzzle.a} ${op} ${puzzle.b} = ${apply(puzzle.a, op, puzzle.b) ?? "?"}`,
-      detail: ok ? "✓ acertou o operador" : `errou — correto: ${puzzle.op}`,
+      detail: ok ? `✓ ${elapsed.toFixed(1)}s` : `errou — correto: ${puzzle.op}`,
     });
   };
 
@@ -116,6 +137,10 @@ export function OperadorGame({
 
   const total = score.acertos + score.erros;
   const taxa = total > 0 ? Math.round((score.acertos / total) * 100) : 0;
+  const liveSeconds = reveal
+    ? (lastTime ?? 0)
+    : (now - startedAt) / 1000;
+
 
   return (
     <div className="grid gap-4 lg:grid-cols-[1fr_320px]">
