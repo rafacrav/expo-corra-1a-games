@@ -146,17 +146,32 @@ export function OperadorGame({
     <div className="grid gap-4 lg:grid-cols-[1fr_320px]">
       {/* Painel principal */}
       <div className="rounded-xl border border-border bg-card p-6">
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between gap-3">
           <span className="font-mono text-xs uppercase tracking-widest text-muted-foreground">
             Descubra o operador
           </span>
-          <button
-            onClick={next}
-            className="rounded-md border border-border bg-surface-2 px-3 py-1 font-display text-xs tracking-widest text-foreground hover:border-primary"
-          >
-            NOVO ENIGMA
-          </button>
+          <div className="flex items-center gap-2">
+            <span
+              className={`rounded-md border px-2 py-1 font-mono text-xs ${
+                liveSeconds > 10 && !reveal
+                  ? "border-destructive/60 text-destructive"
+                  : "border-border text-muted-foreground"
+              }`}
+            >
+              ⏱ {liveSeconds.toFixed(1)}s
+            </span>
+            <span className="rounded-md border border-border bg-surface-2 px-2 py-1 font-mono text-xs text-primary">
+              🔥 {streak}
+            </span>
+            <button
+              onClick={next}
+              className="rounded-md border border-border bg-surface-2 px-3 py-1 font-display text-xs tracking-widest text-foreground hover:border-primary"
+            >
+              NOVO
+            </button>
+          </div>
         </div>
+
 
         <div className="my-8 flex items-center justify-center gap-3 sm:gap-5 font-display text-5xl sm:text-6xl">
           <span className="text-foreground">{puzzle.a}</span>
@@ -205,7 +220,9 @@ export function OperadorGame({
         {reveal && (
           <div className="mt-5 rounded-lg border border-border bg-surface-2 p-4 text-sm">
             <p className="font-display text-lg text-foreground">
-              {picked === puzzle.op ? "Acertou! 🎉" : "Quase! Veja a resposta:"}
+              {picked === puzzle.op
+                ? `Acertou! 🎉 ${lastTime !== null ? `em ${lastTime.toFixed(1)}s` : ""}`
+                : "Quase! Veja a resposta:"}
             </p>
             <p className="mt-1 font-mono text-muted-foreground">
               {puzzle.a} {puzzle.op} {puzzle.b} = {puzzle.result}
@@ -218,13 +235,16 @@ export function OperadorGame({
             </button>
           </div>
         )}
+
       </div>
 
       {/* Painel matemático */}
       <aside className="rounded-xl border border-border bg-card p-5">
         <h4 className="font-display text-lg text-foreground">Painel matemático</h4>
         <p className="mt-1 text-xs text-muted-foreground">
-          Em tempo real, o resultado de cada operação possível com a e b:
+          {reveal
+            ? "Resultados de cada operação possível com a e b:"
+            : "Os resultados aparecem aqui após você responder."}
         </p>
 
         <ul className="mt-3 space-y-1 font-mono text-sm">
@@ -240,18 +260,43 @@ export function OperadorGame({
               </span>
               <span>
                 ={" "}
-                {r === null
-                  ? "—"
-                  : Number.isInteger(r)
-                    ? r
-                    : r.toFixed(2)}
+                {!reveal
+                  ? "···"
+                  : r === null
+                    ? "—"
+                    : Number.isInteger(r)
+                      ? r
+                      : r.toFixed(2)}
                 {reveal && matches ? "  ✓" : ""}
               </span>
             </li>
           ))}
         </ul>
 
-        <div className="mt-5 rounded-lg border border-border bg-surface-2 p-3">
+        <div className="mt-5 grid grid-cols-2 gap-2">
+          <div className="rounded-lg border border-border bg-surface-2 p-3">
+            <p className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
+              Streak
+            </p>
+            <p className="font-display text-2xl text-primary">🔥 {streak}</p>
+            <p className="font-mono text-[10px] text-muted-foreground">
+              recorde: {bestStreak}
+            </p>
+          </div>
+          <div className="rounded-lg border border-border bg-surface-2 p-3">
+            <p className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
+              Tempo
+            </p>
+            <p className="font-display text-2xl text-foreground">
+              {liveSeconds.toFixed(1)}s
+            </p>
+            <p className="font-mono text-[10px] text-muted-foreground">
+              {reveal ? "última rodada" : "rodando..."}
+            </p>
+          </div>
+        </div>
+
+        <div className="mt-2 rounded-lg border border-border bg-surface-2 p-3">
           <p className="font-mono text-[11px] uppercase tracking-widest text-muted-foreground">
             Placar
           </p>
@@ -274,6 +319,7 @@ export function OperadorGame({
           a. Ex.: 8 √ 3 = 2 (pois 2³ = 8).
         </p>
       </aside>
+
     </div>
   );
 }
