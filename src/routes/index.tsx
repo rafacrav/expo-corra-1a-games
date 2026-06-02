@@ -6,6 +6,7 @@ import { GameCard, type GameMeta } from "@/components/hub/GameCard";
 import { MathDiary, type DiaryEntry } from "@/components/hub/MathDiary";
 import { FigurinhasGame } from "@/components/games/figurinhas/FigurinhasGame";
 import { ParabolaGame } from "@/components/games/parabola/ParabolaGame";
+import { OperadorGame } from "@/components/games/operador/OperadorGame";
 import { ComingSoon } from "@/components/games/ComingSoon";
 
 export const Route = createFileRoute("/")({
