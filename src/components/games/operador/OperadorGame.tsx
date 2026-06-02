@@ -91,11 +91,8 @@ export function OperadorGame({
     }));
     pushDiary({
       game: "Operador",
-      title: ok ? "Acertou o operador!" : "Operador errado",
-      lines: [
-        `${puzzle.a} ${op} ${puzzle.b} = ${apply(puzzle.a, op, puzzle.b) ?? "?"}`,
-        ok ? "✓ correto" : `Resposta certa: ${puzzle.op}`,
-      ],
+      formula: `${puzzle.a} ${op} ${puzzle.b} = ${apply(puzzle.a, op, puzzle.b) ?? "?"}`,
+      detail: ok ? "✓ acertou o operador" : `errou — correto: ${puzzle.op}`,
     });
   };
 
