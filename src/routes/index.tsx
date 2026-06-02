@@ -7,7 +7,6 @@ import { MathDiary, type DiaryEntry } from "@/components/hub/MathDiary";
 import { FigurinhasGame } from "@/components/games/figurinhas/FigurinhasGame";
 import { ParabolaGame } from "@/components/games/parabola/ParabolaGame";
 import { OperadorGame } from "@/components/games/operador/OperadorGame";
-import { MercadoGame } from "@/components/games/mercado/MercadoGame";
 import { ComingSoon } from "@/components/games/ComingSoon";
 
 export const Route = createFileRoute("/")({
@@ -59,7 +58,7 @@ const GAMES: GameMeta[] = [
     title: "Função do 1º Grau",
     subtitle: "Monte a equação no mercadinho",
     formula: "5x + 4 = 14",
-    status: "ready",
+    status: "soon",
     icon: <ShoppingCart className="h-5 w-5" />,
   },
   {
@@ -131,8 +130,6 @@ function HubPage() {
             <ParabolaGame pushDiary={pushDiary} />
           ) : active === "operador" ? (
             <OperadorGame pushDiary={pushDiary} />
-          ) : active === "primeiro-grau" ? (
-            <MercadoGame pushDiary={pushDiary} />
           ) : (
             <ComingSoon title={activeGame.title} formula={activeGame.formula} />
           )}
