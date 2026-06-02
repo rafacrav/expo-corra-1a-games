@@ -116,8 +116,8 @@ export function MercadoGame({ pushDiary }: { pushDiary: (e: Omit<DiaryEntry, "id
       const eq = `${puzzle.a}x${puzzle.b > 0 ? ` + ${puzzle.b}` : ""} = ${puzzle.total}`;
       pushDiary({
         game: "Mercadinho",
-        title: correct ? "Acertou x" : timeout ? "Tempo esgotado" : "Errou x",
-        body: `${eq} → x = ${puzzle.x}`,
+        formula: `${eq}`,
+        detail: correct ? `x = ${puzzle.x} ✓` : timeout ? `tempo esgotado — x = ${puzzle.x}` : `errou — x = ${puzzle.x}`,
       });
     },
     [puzzle, reveal, pushDiary],
