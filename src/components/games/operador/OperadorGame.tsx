@@ -59,7 +59,15 @@ function generate(): Puzzle {
         break;
     }
     const r = apply(a, op, b);
-    if (isCleanInt(r)) return { a, b, op, result: Math.round(r) };
+    if (!isCleanInt(r)) continue;
+    const result = Math.round(r);
+    // Garante solução única: nenhum outro operador pode dar o mesmo resultado
+    const others = OPS.filter((o) => o !== op).some((o) => {
+      const rr = apply(a, o, b);
+      return isCleanInt(rr) && Math.round(rr) === result;
+    });
+    if (others) continue;
+    return { a, b, op, result };
   }
   return { a: 6, b: 2, op: "×", result: 12 };
 }
