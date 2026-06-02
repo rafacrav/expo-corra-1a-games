@@ -72,11 +72,20 @@ function generate(): Puzzle {
   return { a: 6, b: 2, op: "×", result: 12 };
 }
 
+const MAX_ROUNDS = 15;
+const BASE_TIME = 20; // segundos na fase 1
+const MIN_TIME = 5;   // segundos mínimo na fase final
+
+function maxTimeForRound(round: number) {
+  return Math.max(MIN_TIME, BASE_TIME - (round - 1));
+}
+
 export function OperadorGame({
   pushDiary,
 }: {
   pushDiary: (e: Omit<DiaryEntry, "id" | "at">) => void;
 }) {
+  const [round, setRound] = useState(1);
   const [puzzle, setPuzzle] = useState<Puzzle>(() => generate());
   const [picked, setPicked] = useState<Op | null>(null);
   const [score, setScore] = useState({ acertos: 0, erros: 0 });
@@ -86,24 +95,66 @@ export function OperadorGame({
   const [startedAt, setStartedAt] = useState<number>(() => Date.now());
   const [now, setNow] = useState<number>(() => Date.now());
   const [lastTime, setLastTime] = useState<number | null>(null);
+  const [won, setWon] = useState(false);
+
+  const maxTime = maxTimeForRound(round);
 
   const next = useCallback(() => {
+    if (round >= MAX_ROUNDS) {
+      // Última rodada já foi; não faz nada aqui (won já está true)
+      return;
+    }
+    setRound((r) => r + 1);
     setPuzzle(generate());
     setPicked(null);
     setReveal(false);
     setStartedAt(Date.now());
     setNow(Date.now());
+    setLastTime(null);
+  }, [round]);
+
+  const restart = useCallback(() => {
+    setRound(1);
+    setPuzzle(generate());
+    setPicked(null);
+    setReveal(false);
+    setScore({ acertos: 0, erros: 0 });
+    setStreak(0);
+    setBestStreak(0);
+    setStartedAt(Date.now());
+    setNow(Date.now());
+    setLastTime(null);
+    setWon(false);
   }, []);
 
   // Timer tick while answering
   useEffect(() => {
-    if (reveal) return;
+    if (reveal || won) return;
     const id = window.setInterval(() => setNow(Date.now()), 100);
     return () => window.clearInterval(id);
-  }, [reveal, puzzle]);
+  }, [reveal, won, puzzle]);
+
+  // Auto-timeout
+  useEffect(() => {
+    if (reveal || won) return;
+    const elapsed = (now - startedAt) / 1000;
+    if (elapsed >= maxTime) {
+      // Tempo esgotado = erro
+      setLastTime(maxTime);
+      setPicked("+" as Op); // placeholder, não importa
+      setReveal(true);
+      setScore((s) => ({ acertos: s.acertos, erros: s.erros + 1 }));
+      setStreak(0);
+      pushDiary({
+        game: "Operador",
+        formula: `${puzzle.a} ? ${puzzle.b} = ${puzzle.result}`,
+        detail: `⏱ tempo esgotado (${maxTime}s) — correto: ${puzzle.op}`,
+      });
+    }
+  }, [now, startedAt, maxTime, reveal, won, puzzle, pushDiary]);
 
   const choose = (op: Op) => {
-    if (reveal) return;
+    if (reveal || won) return;
     const elapsed = (Date.now() - startedAt) / 1000;
     setLastTime(elapsed);
     setPicked(op);
@@ -118,6 +169,9 @@ export function OperadorGame({
       setBestStreak((b) => Math.max(b, ns));
       return ns;
     });
+    if (ok && round === MAX_ROUNDS) {
+      setWon(true);
+    }
     pushDiary({
       game: "Operador",
       formula: `${puzzle.a} ${op} ${puzzle.b} = ${apply(puzzle.a, op, puzzle.b) ?? "?"}`,
@@ -137,18 +191,53 @@ export function OperadorGame({
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Enter" && reveal) next();
+      if (e.key === "Enter" && reveal && !won) next();
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [reveal, next]);
+  }, [reveal, won, next]);
 
   const total = score.acertos + score.erros;
   const taxa = total > 0 ? Math.round((score.acertos / total) * 100) : 0;
-  const liveSeconds = reveal
-    ? (lastTime ?? 0)
-    : (now - startedAt) / 1000;
+  const elapsed = reveal ? (lastTime ?? 0) : (now - startedAt) / 1000;
+  const remaining = Math.max(0, maxTime - elapsed);
 
+  if (won) {
+    return (
+      <div className="flex flex-col items-center justify-center rounded-xl border border-border bg-card p-8 text-center">
+        <div className="mb-4 text-6xl">🏆</div>
+        <h2 className="font-display text-3xl text-gradient-gold">
+          Você venceu!
+        </h2>
+        <p className="mt-2 text-muted-foreground">
+          Completou todas as {MAX_ROUNDS} fases.
+        </p>
+        <div className="mt-4 grid grid-cols-3 gap-3">
+          <div className="rounded-lg border border-border bg-surface-2 p-3">
+            <p className="font-display text-2xl text-primary">{score.acertos}</p>
+            <p className="font-mono text-[10px] text-muted-foreground">acertos</p>
+          </div>
+          <div className="rounded-lg border border-border bg-surface-2 p-3">
+            <p className="font-display text-2xl text-destructive">{score.erros}</p>
+            <p className="font-mono text-[10px] text-muted-foreground">erros</p>
+          </div>
+          <div className="rounded-lg border border-border bg-surface-2 p-3">
+            <p className="font-display text-2xl text-gradient-gold">{taxa}%</p>
+            <p className="font-mono text-[10px] text-muted-foreground">taxa</p>
+          </div>
+        </div>
+        <p className="mt-3 font-mono text-xs text-muted-foreground">
+          🔥 Recorde de streak: {bestStreak}
+        </p>
+        <button
+          onClick={restart}
+          className="mt-6 rounded-md bg-primary px-6 py-3 font-display text-sm tracking-widest text-primary-foreground hover:opacity-90"
+        >
+          JOGAR NOVAMENTE
+        </button>
+      </div>
+    );
+  }
 
   return (
     <div className="grid gap-4 lg:grid-cols-[1fr_320px]">
@@ -161,25 +250,33 @@ export function OperadorGame({
           <div className="flex items-center gap-2">
             <span
               className={`rounded-md border px-2 py-1 font-mono text-xs ${
-                liveSeconds > 10 && !reveal
+                remaining <= 5 && !reveal
                   ? "border-destructive/60 text-destructive"
                   : "border-border text-muted-foreground"
               }`}
             >
-              ⏱ {liveSeconds.toFixed(1)}s
+              ⏱ {remaining.toFixed(1)}s / {maxTime}s
             </span>
             <span className="rounded-md border border-border bg-surface-2 px-2 py-1 font-mono text-xs text-primary">
               🔥 {streak}
             </span>
-            <button
-              onClick={next}
-              className="rounded-md border border-border bg-surface-2 px-3 py-1 font-display text-xs tracking-widest text-foreground hover:border-primary"
-            >
-              NOVO
-            </button>
+            <span className="rounded-md border border-border bg-surface-2 px-2 py-1 font-mono text-xs text-muted-foreground">
+              {round}/{MAX_ROUNDS}
+            </span>
           </div>
         </div>
 
+        {/* Barra de progresso das fases */}
+        <div className="mt-3 flex gap-1">
+          {Array.from({ length: MAX_ROUNDS }).map((_, i) => {
+            const idx = i + 1;
+            let cls = "h-1.5 flex-1 rounded-full ";
+            if (idx < round) cls += "bg-primary";
+            else if (idx === round) cls += "bg-primary/40 animate-pulse";
+            else cls += "bg-muted";
+            return <div key={idx} className={cls} />;
+          })}
+        </div>
 
         <div className="my-8 flex items-center justify-center gap-3 sm:gap-5 font-display text-5xl sm:text-6xl">
           <span className="text-foreground">{puzzle.a}</span>
@@ -235,15 +332,23 @@ export function OperadorGame({
             <p className="mt-1 font-mono text-muted-foreground">
               {puzzle.a} {puzzle.op} {puzzle.b} = {puzzle.result}
             </p>
-            <button
-              onClick={next}
-              className="mt-3 rounded-md bg-primary px-4 py-2 font-display text-sm tracking-widest text-primary-foreground hover:opacity-90"
-            >
-              PRÓXIMO →
-            </button>
+            {round < MAX_ROUNDS ? (
+              <button
+                onClick={next}
+                className="mt-3 rounded-md bg-primary px-4 py-2 font-display text-sm tracking-widest text-primary-foreground hover:opacity-90"
+              >
+                PRÓXIMO →
+              </button>
+            ) : (
+              <button
+                onClick={restart}
+                className="mt-3 rounded-md bg-primary px-4 py-2 font-display text-sm tracking-widest text-primary-foreground hover:opacity-90"
+              >
+                JOGAR NOVAMENTE
+              </button>
+            )}
           </div>
         )}
-
       </div>
 
       {/* Painel matemático */}
@@ -293,13 +398,13 @@ export function OperadorGame({
           </div>
           <div className="rounded-lg border border-border bg-surface-2 p-3">
             <p className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
-              Tempo
+              Tempo restante
             </p>
-            <p className="font-display text-2xl text-foreground">
-              {liveSeconds.toFixed(1)}s
+            <p className={`font-display text-2xl ${remaining <= 5 && !reveal ? "text-destructive" : "text-foreground"}`}>
+              {remaining.toFixed(1)}s
             </p>
             <p className="font-mono text-[10px] text-muted-foreground">
-              {reveal ? "última rodada" : "rodando..."}
+              {reveal ? "última rodada" : `max ${maxTime}s`}
             </p>
           </div>
         </div>
@@ -327,7 +432,6 @@ export function OperadorGame({
           a. Ex.: 8 √ 3 = 2 (pois 2³ = 8).
         </p>
       </aside>
-
     </div>
   );
 }
