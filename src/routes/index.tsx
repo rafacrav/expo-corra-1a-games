@@ -74,7 +74,7 @@ const GAMES: GameMeta[] = [
     title: "Descubra o Operador",
     subtitle: "1 ? 5 = −4 — qual operação?",
     formula: "+ − × ÷ ^ √",
-    status: "soon",
+    status: "ready",
     icon: <Calculator className="h-5 w-5" />,
   },
 ];
@@ -102,7 +102,7 @@ function HubPage() {
             <h2 className="font-display text-2xl sm:text-3xl text-foreground">
               Escolha o <span className="text-gradient-blue">jogo</span>
             </h2>
-            <p className="font-mono text-xs text-muted-foreground">6 jogos • 2 disponíveis</p>
+            <p className="font-mono text-xs text-muted-foreground">6 jogos • 3 disponíveis</p>
           </div>
           <div className="grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-6">
             {GAMES.map((g) => (
@@ -128,6 +128,8 @@ function HubPage() {
             <FigurinhasGame pushDiary={pushDiary} />
           ) : active === "parabola" ? (
             <ParabolaGame pushDiary={pushDiary} />
+          ) : active === "operador" ? (
+            <OperadorGame pushDiary={pushDiary} />
           ) : (
             <ComingSoon title={activeGame.title} formula={activeGame.formula} />
           )}
