@@ -104,7 +104,7 @@ function HubPage() {
             <h2 className="font-display text-2xl sm:text-3xl text-foreground">
               Escolha o <span className="text-gradient-blue">jogo</span>
             </h2>
-            <p className="font-mono text-xs text-muted-foreground">6 jogos • 3 disponíveis</p>
+            <p className="font-mono text-xs text-muted-foreground">6 jogos • 4 disponíveis</p>
           </div>
           <div className="grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-6">
             {GAMES.map((g) => (
