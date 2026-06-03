@@ -52,7 +52,7 @@ const GAMES: GameMeta[] = [
     title: "Hipotenusa",
     subtitle: "Triângulo retângulo no mundo real",
     formula: "a² + b² = c²",
-    status: "soon",
+    status: "ready",
     icon: <Move className="h-5 w-5" />,
   },
   {
