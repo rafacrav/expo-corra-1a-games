@@ -113,9 +113,12 @@ export function PrimeiroGrauGame({ pushDiary }: Props) {
       }
       pushDiary({
         game: "primeiro-grau",
-        title: ok ? "Resolveu a equação" : timedOut ? "Tempo esgotado" : "Errou a equação",
-        detail: `${puzzle.a}x + ${puzzle.b} = ${puzzle.total} → x = ${puzzle.x}`,
-        kind: ok ? "ok" : "err",
+        formula: `${puzzle.a}x + ${puzzle.b} = ${puzzle.total}`,
+        detail: ok
+          ? `x = ${puzzle.x} ✓`
+          : timedOut
+            ? `tempo esgotado — x = ${puzzle.x}`
+            : `errou — x = ${puzzle.x}`,
       });
     },
     [puzzle, reveal, startedAt, pushDiary],
