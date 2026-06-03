@@ -134,6 +134,8 @@ function HubPage() {
             <OperadorGame pushDiary={pushDiary} />
           ) : active === "primeiro-grau" ? (
             <PrimeiroGrauGame pushDiary={pushDiary} />
+          ) : active === "hipotenusa" ? (
+            <HipotenusaGame pushDiary={pushDiary} />
           ) : (
             <ComingSoon title={activeGame.title} formula={activeGame.formula} />
           )}
