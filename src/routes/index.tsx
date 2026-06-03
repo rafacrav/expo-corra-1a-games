@@ -8,6 +8,7 @@ import { FigurinhasGame } from "@/components/games/figurinhas/FigurinhasGame";
 import { ParabolaGame } from "@/components/games/parabola/ParabolaGame";
 import { OperadorGame } from "@/components/games/operador/OperadorGame";
 import { PrimeiroGrauGame } from "@/components/games/primeiro-grau/PrimeiroGrauGame";
+import { HipotenusaGame } from "@/components/games/hipotenusa/HipotenusaGame";
 import { ComingSoon } from "@/components/games/ComingSoon";
 
 export const Route = createFileRoute("/")({
@@ -51,7 +52,7 @@ const GAMES: GameMeta[] = [
     title: "Hipotenusa",
     subtitle: "Triângulo retângulo no mundo real",
     formula: "a² + b² = c²",
-    status: "soon",
+    status: "ready",
     icon: <Move className="h-5 w-5" />,
   },
   {
@@ -103,7 +104,7 @@ function HubPage() {
             <h2 className="font-display text-2xl sm:text-3xl text-foreground">
               Escolha o <span className="text-gradient-blue">jogo</span>
             </h2>
-            <p className="font-mono text-xs text-muted-foreground">6 jogos • 3 disponíveis</p>
+            <p className="font-mono text-xs text-muted-foreground">6 jogos • 4 disponíveis</p>
           </div>
           <div className="grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-6">
             {GAMES.map((g) => (
@@ -133,6 +134,8 @@ function HubPage() {
             <OperadorGame pushDiary={pushDiary} />
           ) : active === "primeiro-grau" ? (
             <PrimeiroGrauGame pushDiary={pushDiary} />
+          ) : active === "hipotenusa" ? (
+            <HipotenusaGame pushDiary={pushDiary} />
           ) : (
             <ComingSoon title={activeGame.title} formula={activeGame.formula} />
           )}
