@@ -8,6 +8,7 @@ import { FigurinhasGame } from "@/components/games/figurinhas/FigurinhasGame";
 import { ParabolaGame } from "@/components/games/parabola/ParabolaGame";
 import { OperadorGame } from "@/components/games/operador/OperadorGame";
 import { PrimeiroGrauGame } from "@/components/games/primeiro-grau/PrimeiroGrauGame";
+import { HipotenusaGame } from "@/components/games/hipotenusa/HipotenusaGame";
 import { ComingSoon } from "@/components/games/ComingSoon";
 
 export const Route = createFileRoute("/")({
