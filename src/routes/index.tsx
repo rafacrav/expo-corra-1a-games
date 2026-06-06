@@ -9,6 +9,7 @@ import { ParabolaGame } from "@/components/games/parabola/ParabolaGame";
 import { OperadorGame } from "@/components/games/operador/OperadorGame";
 import { PrimeiroGrauGame } from "@/components/games/primeiro-grau/PrimeiroGrauGame";
 import { HipotenusaGame } from "@/components/games/hipotenusa/HipotenusaGame";
+import { VelocidadeGame } from "@/components/games/velocidade/VelocidadeGame";
 import { ComingSoon } from "@/components/games/ComingSoon";
 
 export const Route = createFileRoute("/")({
