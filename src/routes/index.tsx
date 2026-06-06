@@ -69,7 +69,7 @@ const GAMES: GameMeta[] = [
     title: "Velocidade Média",
     subtitle: "Chuta a bola — mede deslocamento e tempo",
     formula: "v = Δs / Δt",
-    status: "soon",
+    status: "ready",
     icon: <Sparkles className="h-5 w-5" />,
   },
   {
