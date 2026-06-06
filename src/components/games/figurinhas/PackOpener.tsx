@@ -2,7 +2,8 @@ import { useState } from "react";
 import { PACK_PRICE_BRL, PACK_SIZE, PLAYERS, TOTAL_PLAYERS, TOTAL_RARE, type Player } from "@/lib/players";
 import { formatBRL, formatPct } from "@/lib/figurinhas-math";
 import { PackRevealModal } from "./PackRevealModal";
-import stickerPackImg from "@/assets/sticker-pack.png";
+import stickerPackAsset from "@/assets/sticker-pack-2026.png.asset.json";
+const stickerPackImg = stickerPackAsset.url;
 
 export function PackOpener({
   onOpen,
