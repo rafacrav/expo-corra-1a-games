@@ -1,6 +1,6 @@
 import { useCallback, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
-import { Album as AlbumIcon, Calculator, Move, ShoppingCart, Sparkles, Target } from "lucide-react";
+import { Album as AlbumIcon, Calculator, Move, Scale, ShoppingCart, Sparkles, Target } from "lucide-react";
 import { TopBar } from "@/components/hub/TopBar";
 import { GameCard, type GameMeta } from "@/components/hub/GameCard";
 import { MathDiary, type DiaryEntry } from "@/components/hub/MathDiary";
@@ -10,6 +10,7 @@ import { OperadorGame } from "@/components/games/operador/OperadorGame";
 import { PrimeiroGrauGame } from "@/components/games/primeiro-grau/PrimeiroGrauGame";
 import { HipotenusaGame } from "@/components/games/hipotenusa/HipotenusaGame";
 import { VelocidadeGame } from "@/components/games/velocidade/VelocidadeGame";
+import { RegraTresGame } from "@/components/games/regra-tres/RegraTresGame";
 import { ComingSoon } from "@/components/games/ComingSoon";
 
 export const Route = createFileRoute("/")({
