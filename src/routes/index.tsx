@@ -1,6 +1,6 @@
 import { useCallback, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
-import { Album as AlbumIcon, Calculator, Move, ShoppingCart, Sparkles, Target } from "lucide-react";
+import { Album as AlbumIcon, Calculator, Move, Scale, ShoppingCart, Sparkles, Target } from "lucide-react";
 import { TopBar } from "@/components/hub/TopBar";
 import { GameCard, type GameMeta } from "@/components/hub/GameCard";
 import { MathDiary, type DiaryEntry } from "@/components/hub/MathDiary";
@@ -10,6 +10,7 @@ import { OperadorGame } from "@/components/games/operador/OperadorGame";
 import { PrimeiroGrauGame } from "@/components/games/primeiro-grau/PrimeiroGrauGame";
 import { HipotenusaGame } from "@/components/games/hipotenusa/HipotenusaGame";
 import { VelocidadeGame } from "@/components/games/velocidade/VelocidadeGame";
+import { RegraTresGame } from "@/components/games/regra-tres/RegraTresGame";
 import { ComingSoon } from "@/components/games/ComingSoon";
 
 export const Route = createFileRoute("/")({
@@ -80,6 +81,14 @@ const GAMES: GameMeta[] = [
     status: "ready",
     icon: <Calculator className="h-5 w-5" />,
   },
+  {
+    id: "regra-tres",
+    title: "Regra de Três",
+    subtitle: "Proporção direta e inversa do dia a dia",
+    formula: "a/b = c/x",
+    status: "ready",
+    icon: <Scale className="h-5 w-5" />,
+  },
 ];
 
 function HubPage() {
@@ -105,9 +114,9 @@ function HubPage() {
             <h2 className="font-display text-2xl sm:text-3xl text-foreground">
               Escolha o <span className="text-gradient-blue">jogo</span>
             </h2>
-            <p className="font-mono text-xs text-muted-foreground">6 jogos • 5 disponíveis</p>
+            <p className="font-mono text-xs text-muted-foreground">7 jogos • 7 disponíveis</p>
           </div>
-          <div className="grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-6">
+          <div className="grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-7">
             {GAMES.map((g) => (
               <GameCard
                 key={g.id}
@@ -139,6 +148,8 @@ function HubPage() {
             <HipotenusaGame pushDiary={pushDiary} />
           ) : active === "velocidade" ? (
             <VelocidadeGame pushDiary={pushDiary} />
+          ) : active === "regra-tres" ? (
+            <RegraTresGame pushDiary={pushDiary} />
           ) : (
             <ComingSoon title={activeGame.title} formula={activeGame.formula} />
           )}
