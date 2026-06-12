@@ -81,6 +81,14 @@ const GAMES: GameMeta[] = [
     status: "ready",
     icon: <Calculator className="h-5 w-5" />,
   },
+  {
+    id: "regra-tres",
+    title: "Regra de Três",
+    subtitle: "Proporção direta e inversa do dia a dia",
+    formula: "a/b = c/x",
+    status: "ready",
+    icon: <Scale className="h-5 w-5" />,
+  },
 ];
 
 function HubPage() {
