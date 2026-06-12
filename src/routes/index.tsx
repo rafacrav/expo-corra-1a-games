@@ -114,9 +114,9 @@ function HubPage() {
             <h2 className="font-display text-2xl sm:text-3xl text-foreground">
               Escolha o <span className="text-gradient-blue">jogo</span>
             </h2>
-            <p className="font-mono text-xs text-muted-foreground">6 jogos • 5 disponíveis</p>
+            <p className="font-mono text-xs text-muted-foreground">7 jogos • 7 disponíveis</p>
           </div>
-          <div className="grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-6">
+          <div className="grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-7">
             {GAMES.map((g) => (
               <GameCard
                 key={g.id}
@@ -148,6 +148,8 @@ function HubPage() {
             <HipotenusaGame pushDiary={pushDiary} />
           ) : active === "velocidade" ? (
             <VelocidadeGame pushDiary={pushDiary} />
+          ) : active === "regra-tres" ? (
+            <RegraTresGame pushDiary={pushDiary} />
           ) : (
             <ComingSoon title={activeGame.title} formula={activeGame.formula} />
           )}
