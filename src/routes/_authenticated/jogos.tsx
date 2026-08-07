@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { Album as AlbumIcon, Calculator, LogOut, Move, Scale, ShoppingCart, Sparkles, Target } from "lucide-react";
+import { Album as AlbumIcon, Calculator, ChevronLeft, ChevronRight, LogOut, Move, Scale, ShoppingCart, Sparkles, Target } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { GameCard, type GameMeta } from "@/components/hub/GameCard";
 import { MathDiary, type DiaryEntry } from "@/components/hub/MathDiary";
@@ -35,7 +35,8 @@ const GAMES: GameMeta[] = [
 
 function HubPage() {
   const navigate = useNavigate();
-  const [active, setActive] = useState<string>("figurinhas");
+  const [active, setActive] = useState<string | null>(null);
+  const [index, setIndex] = useState(0);
   const [diary, setDiary] = useState<DiaryEntry[]>([]);
   const [profile, setProfile] = useState<{ first_name: string; last_name: string } | null>(null);
   const [userId, setUserId] = useState<string | null>(null);
@@ -102,69 +103,97 @@ function HubPage() {
       </header>
 
       <main className="relative z-10 mx-auto w-full max-w-7xl flex-1 px-4 py-6 sm:px-6">
-        {/* Etapa 1 — catálogo */}
-        <section className="rounded-2xl border border-border bg-card/40 p-4 sm:p-5">
-          <div className="mb-3 flex flex-wrap items-baseline justify-between gap-2">
-            <div className="flex items-baseline gap-2">
-              <span className="rounded-full bg-muted px-2 py-0.5 font-mono text-[10px] tracking-widest text-muted-foreground">
-                PASSO 1
-              </span>
+        {!active ? (
+          <section className="rounded-2xl border border-border bg-card/40 p-4 sm:p-5">
+            <div className="mb-4 flex items-baseline justify-between gap-2">
               <h2 className="font-display text-xl text-foreground sm:text-2xl">
                 Escolha o <span className="text-gradient-blue">jogo</span>
               </h2>
+              <p className="font-mono text-xs text-muted-foreground">
+                {index + 1} / {GAMES.length}
+              </p>
             </div>
-            <p className="font-mono text-xs text-muted-foreground">7 jogos • 7 disponíveis</p>
-          </div>
-          <div className="grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-7">
-            {GAMES.map((g) => (
-              <GameCard
-                key={g.id}
-                game={g}
-                active={active === g.id && g.status === "ready"}
-                onClick={() => g.status === "ready" && setActive(g.id)}
-              />
-            ))}
-          </div>
-        </section>
 
-        {/* Separador */}
-        <div className="my-8 flex items-center gap-3" aria-hidden>
-          <div className="h-px flex-1 bg-border" />
-          <span className="font-mono text-[10px] tracking-widest text-muted-foreground">
-            AGORA JOGUE
-          </span>
-          <div className="h-px flex-1 bg-border" />
-        </div>
+            <div className="flex items-center gap-2 sm:gap-4">
+              <button
+                onClick={() => setIndex((i) => (i - 1 + GAMES.length) % GAMES.length)}
+                aria-label="Jogo anterior"
+                className="grid h-11 w-11 shrink-0 place-items-center rounded-full border border-border bg-card text-foreground transition hover:border-primary hover:text-primary"
+              >
+                <ChevronLeft className="h-5 w-5" />
+              </button>
 
-        {/* Etapa 2 — jogo ativo */}
-        <section className="rounded-2xl border border-primary/25 bg-surface-2/40 p-4 shadow-elegant sm:p-6">
-          <div className="mb-4 grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3 border-b border-border pb-3 sm:flex sm:justify-between">
-            <div className="flex min-w-0 items-center gap-2">
-              <span className="grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-primary/15 text-primary">
-                {activeGame.icon}
-              </span>
-              <div className="min-w-0">
-                <h2 className="truncate font-display text-xl text-foreground sm:text-2xl">
-                  {activeGame.title}
-                </h2>
-                <p className="truncate text-xs text-muted-foreground">{activeGame.subtitle}</p>
+              <div className="min-w-0 flex-1">
+                <GameCard
+                  key={GAMES[index].id}
+                  game={GAMES[index]}
+                  active={false}
+                  onClick={() => setActive(GAMES[index].id)}
+                />
               </div>
-            </div>
-            <code className="shrink-0 rounded bg-muted px-2 py-1 font-mono text-[11px] text-primary">
-              {activeGame.formula}
-            </code>
-          </div>
-          {active === "figurinhas" ? <FigurinhasGame pushDiary={pushDiary} />
-            : active === "parabola" ? <ParabolaGame pushDiary={pushDiary} />
-            : active === "operador" ? <OperadorGame pushDiary={pushDiary} />
-            : active === "primeiro-grau" ? <PrimeiroGrauGame pushDiary={pushDiary} />
-            : active === "hipotenusa" ? <HipotenusaGame pushDiary={pushDiary} />
-            : active === "velocidade" ? <VelocidadeGame pushDiary={pushDiary} />
-            : active === "regra-tres" ? <RegraTresGame pushDiary={pushDiary} />
-            : <ComingSoon title={activeGame.title} formula={activeGame.formula} />}
-        </section>
 
+              <button
+                onClick={() => setIndex((i) => (i + 1) % GAMES.length)}
+                aria-label="Próximo jogo"
+                className="grid h-11 w-11 shrink-0 place-items-center rounded-full border border-border bg-card text-foreground transition hover:border-primary hover:text-primary"
+              >
+                <ChevronRight className="h-5 w-5" />
+              </button>
+            </div>
+
+            <div className="mt-4 flex justify-center gap-1.5">
+              {GAMES.map((g, i) => (
+                <button
+                  key={g.id}
+                  aria-label={g.title}
+                  onClick={() => setIndex(i)}
+                  className={`h-1.5 rounded-full transition-all ${
+                    i === index ? "w-6 bg-primary" : "w-1.5 bg-border"
+                  }`}
+                />
+              ))}
+            </div>
+
+            <p className="mt-4 text-center text-xs text-muted-foreground">
+              Toque no card para abrir o jogo
+            </p>
+          </section>
+        ) : (
+          <section className="rounded-2xl border border-primary/25 bg-surface-2/40 p-4 shadow-elegant sm:p-6">
+            <button
+              onClick={() => setActive(null)}
+              className="mb-3 inline-flex items-center gap-1.5 rounded-md border border-border bg-muted px-3 py-1.5 text-xs font-medium text-foreground hover:border-primary hover:text-primary"
+            >
+              <ChevronLeft className="h-4 w-4" /> Voltar aos jogos
+            </button>
+            <div className="mb-4 grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3 border-b border-border pb-3 sm:flex sm:justify-between">
+              <div className="flex min-w-0 items-center gap-2">
+                <span className="grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-primary/15 text-primary">
+                  {activeGame!.icon}
+                </span>
+                <div className="min-w-0">
+                  <h2 className="truncate font-display text-xl text-foreground sm:text-2xl">
+                    {activeGame!.title}
+                  </h2>
+                  <p className="truncate text-xs text-muted-foreground">{activeGame!.subtitle}</p>
+                </div>
+              </div>
+              <code className="shrink-0 rounded bg-muted px-2 py-1 font-mono text-[11px] text-primary">
+                {activeGame!.formula}
+              </code>
+            </div>
+            {active === "figurinhas" ? <FigurinhasGame pushDiary={pushDiary} />
+              : active === "parabola" ? <ParabolaGame pushDiary={pushDiary} />
+              : active === "operador" ? <OperadorGame pushDiary={pushDiary} />
+              : active === "primeiro-grau" ? <PrimeiroGrauGame pushDiary={pushDiary} />
+              : active === "hipotenusa" ? <HipotenusaGame pushDiary={pushDiary} />
+              : active === "velocidade" ? <VelocidadeGame pushDiary={pushDiary} />
+              : active === "regra-tres" ? <RegraTresGame pushDiary={pushDiary} />
+              : <ComingSoon title={activeGame!.title} formula={activeGame!.formula} />}
+          </section>
+        )}
       </main>
+
 
       <MathDiary entries={diary} />
     </div>
