@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { Album as AlbumIcon, Calculator, LogOut, Move, Scale, ShoppingCart, Sparkles, Target } from "lucide-react";
+import { Album as AlbumIcon, Calculator, ChevronLeft, ChevronRight, LogOut, Move, Scale, ShoppingCart, Sparkles, Target } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { GameCard, type GameMeta } from "@/components/hub/GameCard";
 import { MathDiary, type DiaryEntry } from "@/components/hub/MathDiary";
