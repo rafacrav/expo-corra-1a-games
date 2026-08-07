@@ -101,12 +101,18 @@ function HubPage() {
         </div>
       </header>
 
-      <main className="relative z-10 mx-auto w-full max-w-7xl flex-1 space-y-6 px-4 py-6 sm:px-6">
-        <section>
-          <div className="mb-3 flex items-baseline justify-between">
-            <h2 className="font-display text-2xl sm:text-3xl text-foreground">
-              Escolha o <span className="text-gradient-blue">jogo</span>
-            </h2>
+      <main className="relative z-10 mx-auto w-full max-w-7xl flex-1 px-4 py-6 sm:px-6">
+        {/* Etapa 1 — catálogo */}
+        <section className="rounded-2xl border border-border bg-card/40 p-4 sm:p-5">
+          <div className="mb-3 flex flex-wrap items-baseline justify-between gap-2">
+            <div className="flex items-baseline gap-2">
+              <span className="rounded-full bg-muted px-2 py-0.5 font-mono text-[10px] tracking-widest text-muted-foreground">
+                PASSO 1
+              </span>
+              <h2 className="font-display text-xl text-foreground sm:text-2xl">
+                Escolha o <span className="text-gradient-blue">jogo</span>
+              </h2>
+            </div>
             <p className="font-mono text-xs text-muted-foreground">7 jogos • 7 disponíveis</p>
           </div>
           <div className="grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-7">
@@ -121,10 +127,30 @@ function HubPage() {
           </div>
         </section>
 
-        <section>
-          <div className="mb-3 flex items-baseline justify-between">
-            <h2 className="font-display text-3xl text-foreground">{activeGame.title}</h2>
-            <code className="rounded bg-muted px-2 py-1 font-mono text-xs text-primary">
+        {/* Separador */}
+        <div className="my-8 flex items-center gap-3" aria-hidden>
+          <div className="h-px flex-1 bg-border" />
+          <span className="font-mono text-[10px] tracking-widest text-muted-foreground">
+            AGORA JOGUE
+          </span>
+          <div className="h-px flex-1 bg-border" />
+        </div>
+
+        {/* Etapa 2 — jogo ativo */}
+        <section className="rounded-2xl border border-primary/25 bg-surface-2/40 p-4 shadow-elegant sm:p-6">
+          <div className="mb-4 grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3 border-b border-border pb-3 sm:flex sm:justify-between">
+            <div className="flex min-w-0 items-center gap-2">
+              <span className="grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-primary/15 text-primary">
+                {activeGame.icon}
+              </span>
+              <div className="min-w-0">
+                <h2 className="truncate font-display text-xl text-foreground sm:text-2xl">
+                  {activeGame.title}
+                </h2>
+                <p className="truncate text-xs text-muted-foreground">{activeGame.subtitle}</p>
+              </div>
+            </div>
+            <code className="shrink-0 rounded bg-muted px-2 py-1 font-mono text-[11px] text-primary">
               {activeGame.formula}
             </code>
           </div>
@@ -137,6 +163,7 @@ function HubPage() {
             : active === "regra-tres" ? <RegraTresGame pushDiary={pushDiary} />
             : <ComingSoon title={activeGame.title} formula={activeGame.formula} />}
         </section>
+
       </main>
 
       <MathDiary entries={diary} />
