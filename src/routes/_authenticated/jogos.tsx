@@ -35,7 +35,8 @@ const GAMES: GameMeta[] = [
 
 function HubPage() {
   const navigate = useNavigate();
-  const [active, setActive] = useState<string>("figurinhas");
+  const [active, setActive] = useState<string | null>(null);
+  const [index, setIndex] = useState(0);
   const [diary, setDiary] = useState<DiaryEntry[]>([]);
   const [profile, setProfile] = useState<{ first_name: string; last_name: string } | null>(null);
   const [userId, setUserId] = useState<string | null>(null);
