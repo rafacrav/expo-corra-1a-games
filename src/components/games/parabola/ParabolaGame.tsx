@@ -102,7 +102,7 @@ export function ParabolaGame({
   const caught = phase === "done" && catchErr < 0.5;
 
   return (
-    <div className="grid gap-4 lg:grid-cols-[1fr_320px]">
+    <div className="grid gap-4 xl:grid-cols-[1fr_320px]">
       <div className="space-y-3 rounded-xl border border-border bg-card p-4">
         {/* Field */}
         <div className="overflow-hidden rounded-lg border border-border bg-gradient-to-b from-sky-100 to-emerald-50">

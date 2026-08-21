@@ -16,7 +16,7 @@ export function MathDiary({ entries }: { entries: DiaryEntry[] }) {
 
   return (
     <section className="relative z-10 border-t border-border bg-surface/70 backdrop-blur-xl">
-      <div className="mx-auto flex max-w-7xl flex-col gap-2 px-4 py-3 sm:px-6">
+      <div className="mx-auto flex max-w-[1600px] flex-col gap-2 px-4 py-3 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between">
           <h4 className="font-display text-sm tracking-widest text-primary">
             DIÁRIO MATEMÁTICO • TEMPO REAL
@@ -25,11 +25,7 @@ export function MathDiary({ entries }: { entries: DiaryEntry[] }) {
             {entries.length} eventos
           </span>
         </div>
-        <div
-          ref={ref}
-          className="flex gap-2 overflow-x-auto pb-1"
-          aria-live="polite"
-        >
+        <div ref={ref} className="flex gap-2 overflow-x-auto pb-1" aria-live="polite">
           {entries.length === 0 && (
             <p className="text-xs italic text-muted-foreground">
               Comece a jogar — as fórmulas aparecem aqui em tempo real.

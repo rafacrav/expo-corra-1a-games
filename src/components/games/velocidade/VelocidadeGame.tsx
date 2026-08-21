@@ -241,7 +241,7 @@ export function VelocidadeGame({ pushDiary }: Props) {
   );
 
   return (
-    <div className="grid gap-4 lg:grid-cols-[1.4fr_1fr]">
+    <div className="grid gap-4 xl:grid-cols-[1.4fr_1fr]">
       <div className="rounded-2xl border border-border bg-card p-5">
         <div className="mb-3 flex items-center justify-between gap-3">
           <div className="flex items-center gap-2 text-xs">

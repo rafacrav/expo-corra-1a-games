@@ -240,7 +240,7 @@ export function OperadorGame({
   }
 
   return (
-    <div className="grid gap-4 lg:grid-cols-[1fr_320px]">
+    <div className="grid gap-4 xl:grid-cols-[1fr_320px]">
       {/* Painel principal */}
       <div className="rounded-xl border border-border bg-card p-6">
         <div className="flex items-center justify-between gap-3">
