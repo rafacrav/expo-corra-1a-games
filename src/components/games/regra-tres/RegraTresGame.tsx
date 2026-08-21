@@ -313,7 +313,7 @@ export function RegraTresGame({ pushDiary }: Props) {
   const { scenario, a, b, c, answer } = puzzle;
 
   return (
-    <div className="grid gap-4 lg:grid-cols-[1.4fr_1fr]">
+    <div className="grid gap-4 xl:grid-cols-[1.4fr_1fr]">
       {/* Painel do jogo */}
       <div className="rounded-2xl border border-border bg-card p-5">
         <div className="mb-3 flex items-center justify-between gap-3">
