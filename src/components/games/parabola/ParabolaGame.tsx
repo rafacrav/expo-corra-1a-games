@@ -131,7 +131,7 @@ export function ParabolaGame({
   const caught = phase === "done" && catchErr < 0.5;
 
   return (
-    <div className="grid gap-4 lg:grid-cols-[1fr_320px]">
+    <div className="grid gap-4 xl:grid-cols-[1fr_320px]">
       <div className="space-y-3 rounded-xl border border-border bg-card p-4">
         {/* Field */}
         <div className="overflow-hidden rounded-lg border border-border bg-gradient-to-b from-sky-100 to-emerald-50">
@@ -156,8 +156,22 @@ export function ParabolaGame({
               const p = toPx(xm, 0);
               return (
                 <g key={i}>
-                  <line x1={p.x} y1={groundY} x2={p.x} y2={groundY + 4} stroke="#065f46" strokeWidth="1" />
-                  <text x={p.x} y={groundY + 14} fontSize="9" fill="#065f46" textAnchor="middle" fontFamily="monospace">
+                  <line
+                    x1={p.x}
+                    y1={groundY}
+                    x2={p.x}
+                    y2={groundY + 4}
+                    stroke="#065f46"
+                    strokeWidth="1"
+                  />
+                  <text
+                    x={p.x}
+                    y={groundY + 14}
+                    fontSize="9"
+                    fill="#065f46"
+                    textAnchor="middle"
+                    fontFamily="monospace"
+                  >
                     {xm}m
                   </text>
                 </g>
@@ -212,8 +226,8 @@ export function ParabolaGame({
           </svg>
         </div>
 
-        {/* Controls */}
-        <fieldset disabled={phase !== "idle"} className="grid gap-3 sm:grid-cols-3">
+       
+        <div className="grid gap-3 sm:grid-cols-3">
           <Slider
             label="Ângulo θ"
             value={angle}
@@ -279,11 +293,7 @@ export function ParabolaGame({
           formula={`T = 2·v_y / g = 2·${vy.toFixed(2)} / ${G}`}
           value={`${tFlight.toFixed(2)} s`}
         />
-        <Block
-          label="Altura máxima"
-          formula={`H = v_y² / (2g)`}
-          value={`${hMax.toFixed(2)} m`}
-        />
+        <Block label="Altura máxima" formula={`H = v_y² / (2g)`} value={`${hMax.toFixed(2)} m`} />
         <Block
           label="Alcance (onde a bola cai)"
           formula={`R = v₀²·sen(2θ) / g`}
@@ -298,7 +308,7 @@ export function ParabolaGame({
         {phase === "done" && (
           <p
             className={`rounded-md p-2 text-center font-display text-lg ${
-              caught ? "bg-gradient-green text-primary-foreground" : "bg-destructive/15 text-destructive"
+              caught ? "bg-primary text-primary-foreground" : "bg-destructive/15 text-destructive"
             }`}
           >
             {caught ? "🎯 INTERCEPTOU!" : `Errou por ${catchErr.toFixed(2)} m`}
@@ -363,10 +373,16 @@ function Block({
   accent?: boolean;
 }) {
   return (
-    <div className={`rounded-md border p-3 ${accent ? "border-primary bg-primary/5" : "border-border bg-muted"}`}>
+    <div
+      className={`rounded-md border p-3 ${accent ? "border-primary bg-primary/5" : "border-border bg-muted"}`}
+    >
       <p className="text-[11px] uppercase tracking-widest text-muted-foreground">{label}</p>
-      <code className="block whitespace-pre py-1 font-mono text-[11px] text-primary">{formula}</code>
-      <p className={`font-display text-2xl ${accent ? "text-gradient-gold" : "text-foreground"}`}>{value}</p>
+      <code className="block whitespace-pre py-1 font-mono text-[11px] text-primary">
+        {formula}
+      </code>
+      <p className={`font-display text-2xl ${accent ? "text-gradient-gold" : "text-foreground"}`}>
+        {value}
+      </p>
     </div>
   );
 }
