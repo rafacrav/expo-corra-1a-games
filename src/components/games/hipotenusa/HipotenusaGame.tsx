@@ -33,7 +33,13 @@ const SCENARIOS: Scenario[] = [
   { emoji: "📺", label: "tela", itemA: "largura", itemB: "altura", itemC: "diagonal" },
   { emoji: "🪜", label: "escada", itemA: "distância da parede", itemB: "altura", itemC: "escada" },
   { emoji: "🚩", label: "bandeirinha", itemA: "haste vertical", itemB: "distância", itemC: "cabo" },
-  { emoji: "⚽", label: "quadra", itemA: "largura", itemB: "profundidade", itemC: "diagonal do campo" },
+  {
+    emoji: "⚽",
+    label: "quadra",
+    itemA: "largura",
+    itemB: "profundidade",
+    itemC: "diagonal do campo",
+  },
   { emoji: "🗺️", label: "mapa", itemA: "leste", itemB: "norte", itemC: "distância em linha reta" },
   { emoji: "🛣️", label: "estrada", itemA: "horizontal", itemB: "subida", itemC: "comprimento" },
 ];
@@ -59,6 +65,123 @@ type Puzzle = {
   askFor: "a" | "b" | "c";
   answer: number;
 };
+
+function RightTriangleDiagram({ puzzle }: { puzzle: Puzzle }) {
+  const { a, b, c, askFor, scenario } = puzzle;
+  const horizontalValue = askFor === "a" ? "?" : `${a} m`;
+  const verticalValue = askFor === "b" ? "?" : `${b} m`;
+  const hypotenuseValue = askFor === "c" ? "?" : `${c} m`;
+
+  // A equipe mantém a proporção reconhecível mesmo quando os catetos são muito diferentes.
+  const visualRatio = Math.min(1.8, Math.max(0.55, a / b));
+  const triangleHeight = 190;
+  const triangleWidth = triangleHeight * visualRatio;
+  const rightX = 390 + triangleWidth / 2;
+  const leftX = rightX - triangleWidth;
+  const topY = 45;
+  const baseY = topY + triangleHeight;
+  const unknownColor = "var(--primary)";
+
+  return (
+    <figure className="mt-4 overflow-hidden rounded-xl border border-border bg-background shadow-sm">
+      <svg
+        viewBox="0 0 640 300"
+        role="img"
+        aria-labelledby="triangle-title triangle-description"
+        className="h-auto min-h-56 w-full"
+      >
+        <title id="triangle-title">Triângulo retângulo do cenário {scenario.label}</title>
+        <desc id="triangle-description">
+          Representação dos lados {scenario.itemA}, {scenario.itemB} e {scenario.itemC}.
+        </desc>
+
+        <defs>
+          <linearGradient id="triangle-fill" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stopColor="var(--primary)" stopOpacity="0.22" />
+            <stop offset="100%" stopColor="var(--primary)" stopOpacity="0.05" />
+          </linearGradient>
+          <pattern id="diagram-grid" width="24" height="24" patternUnits="userSpaceOnUse">
+            <path
+              d="M 24 0 L 0 0 0 24"
+              fill="none"
+              stroke="var(--border)"
+              strokeWidth="1"
+              opacity="0.5"
+            />
+          </pattern>
+        </defs>
+
+        <rect width="640" height="300" fill="url(#diagram-grid)" />
+        <text x="24" y="32" fill="var(--muted-foreground)" fontSize="13" fontWeight="600">
+          {scenario.emoji} REPRESENTAÇÃO DO CENÁRIO
+        </text>
+
+        <path
+          d={`M ${leftX} ${baseY} L ${rightX} ${baseY} L ${rightX} ${topY} Z`}
+          fill="url(#triangle-fill)"
+          stroke="var(--foreground)"
+          strokeWidth="4"
+          strokeLinejoin="round"
+          vectorEffect="non-scaling-stroke"
+        />
+        <path
+          d={`M ${rightX - 25} ${baseY} L ${rightX - 25} ${baseY - 25} L ${rightX} ${baseY - 25}`}
+          fill="none"
+          stroke="var(--primary)"
+          strokeWidth="3"
+          vectorEffect="non-scaling-stroke"
+        />
+
+        <g fontFamily="ui-monospace, SFMono-Regular, Menlo, monospace" fontWeight="700">
+          <text
+            x={(leftX + rightX) / 2}
+            y={baseY + 34}
+            textAnchor="middle"
+            fill={askFor === "a" ? unknownColor : "var(--foreground)"}
+            fontSize={askFor === "a" ? 24 : 17}
+          >
+            {horizontalValue}
+          </text>
+          <text
+            x={rightX + 22}
+            y={(topY + baseY) / 2 + 6}
+            fill={askFor === "b" ? unknownColor : "var(--foreground)"}
+            fontSize={askFor === "b" ? 24 : 17}
+          >
+            {verticalValue}
+          </text>
+          <text
+            x={(leftX + rightX) / 2 - 12}
+            y={(topY + baseY) / 2 - 14}
+            textAnchor="middle"
+            fill={askFor === "c" ? unknownColor : "var(--foreground)"}
+            fontSize={askFor === "c" ? 24 : 17}
+          >
+            {hypotenuseValue}
+          </text>
+        </g>
+      </svg>
+
+      <figcaption className="grid gap-2 border-t border-border bg-muted/40 p-3 text-xs sm:grid-cols-3">
+        {[
+          { key: "a", label: scenario.itemA, value: horizontalValue },
+          { key: "b", label: scenario.itemB, value: verticalValue },
+          { key: "c", label: scenario.itemC, value: hypotenuseValue },
+        ].map((side) => (
+          <div
+            key={side.key}
+            className="flex items-center justify-between gap-2 rounded-lg bg-background px-3 py-2"
+          >
+            <span className="min-w-0 truncate text-muted-foreground">{side.label}</span>
+            <strong className={side.value === "?" ? "text-lg text-primary" : "text-foreground"}>
+              {side.value}
+            </strong>
+          </div>
+        ))}
+      </figcaption>
+    </figure>
+  );
+}
 
 function generate(round: number): Puzzle {
   // Dificuldade cresce: números maiores, mas sempre inteiros
@@ -245,7 +368,7 @@ export function HipotenusaGame({ pushDiary }: Props) {
   const knownC = askFor !== "c" ? c : null;
 
   return (
-    <div className="grid gap-4 lg:grid-cols-[1.4fr_1fr]">
+    <div className="grid gap-4 xl:grid-cols-[1.4fr_1fr]">
       {/* Painel do jogo */}
       <div className="rounded-2xl border border-border bg-card p-5">
         <div className="mb-3 flex items-center justify-between gap-3">
@@ -284,61 +407,29 @@ export function HipotenusaGame({ pushDiary }: Props) {
           <p className="mt-2 text-base text-foreground">
             {askFor === "c" ? (
               <>
-                Sabemos que <strong>{scenario.itemA}</strong> ={" "}
-                <strong>{knownA} m</strong> e <strong>{scenario.itemB}</strong> ={" "}
-                <strong>{knownB} m</strong>.
+                Sabemos que <strong>{scenario.itemA}</strong> = <strong>{knownA} m</strong> e{" "}
+                <strong>{scenario.itemB}</strong> = <strong>{knownB} m</strong>.
                 <br />
                 Qual o valor de <strong>{scenario.itemC}</strong> (a hipotenusa)?
               </>
             ) : askFor === "a" ? (
               <>
-                Sabemos que <strong>{scenario.itemB}</strong> ={" "}
-                <strong>{knownB} m</strong> e <strong>{scenario.itemC}</strong> ={" "}
-                <strong>{knownC} m</strong>.
+                Sabemos que <strong>{scenario.itemB}</strong> = <strong>{knownB} m</strong> e{" "}
+                <strong>{scenario.itemC}</strong> = <strong>{knownC} m</strong>.
                 <br />
                 Qual o valor de <strong>{scenario.itemA}</strong> (cateto)?
               </>
             ) : (
               <>
-                Sabemos que <strong>{scenario.itemA}</strong> ={" "}
-                <strong>{knownA} m</strong> e <strong>{scenario.itemC}</strong> ={" "}
-                <strong>{knownC} m</strong>.
+                Sabemos que <strong>{scenario.itemA}</strong> = <strong>{knownA} m</strong> e{" "}
+                <strong>{scenario.itemC}</strong> = <strong>{knownC} m</strong>.
                 <br />
                 Qual o valor de <strong>{scenario.itemB}</strong> (cateto)?
               </>
             )}
           </p>
 
-          {/* Triângulo visual ASCII */}
-          <div className="mt-3 inline-block rounded bg-background px-3 py-2 font-mono text-sm leading-relaxed text-foreground">
-            <div>
-              {askFor === "c" ? "  ?" : `  ${c} m`}
-              <span className="text-muted-foreground"> ← {scenario.itemC}</span>
-            </div>
-            <div>
-              {"   /|"}
-            </div>
-            <div>
-              {"  / |"}
-            </div>
-            <div>
-              {askFor === "b" ? " ?" : ` ${b}`}
-              <span className="text-muted-foreground">m</span>
-              {"  |"}
-              <span className="text-muted-foreground"> ← {scenario.itemB}</span>
-            </div>
-            <div>
-              {"/   |"}
-            </div>
-            <div>
-              {"/____|"}
-            </div>
-            <div>
-              {askFor === "a" ? " ?" : ` ${a}`}
-              <span className="text-muted-foreground">m</span>
-              <span className="text-muted-foreground"> ← {scenario.itemA}</span>
-            </div>
-          </div>
+          <RightTriangleDiagram puzzle={puzzle} />
         </div>
 
         {/* Opções */}
@@ -371,18 +462,24 @@ export function HipotenusaGame({ pushDiary }: Props) {
           <div className="mt-4 rounded-lg border border-border bg-muted/40 p-3 text-sm">
             {picked === puzzle.answer ? (
               <span className="text-primary">
-                Acertou! 🎉 {askFor === "c" ? scenario.itemC : askFor === "a" ? scenario.itemA : scenario.itemB} = {puzzle.answer} m
+                Acertou! 🎉{" "}
+                {askFor === "c" ? scenario.itemC : askFor === "a" ? scenario.itemA : scenario.itemB}{" "}
+                = {puzzle.answer} m
                 {lastTime !== null && (
                   <span className="ml-2 text-muted-foreground">em {lastTime.toFixed(1)}s</span>
                 )}
               </span>
             ) : picked === -1 ? (
               <span className="text-destructive">
-                ⏱ Tempo esgotado! A resposta era {askFor === "c" ? scenario.itemC : askFor === "a" ? scenario.itemA : scenario.itemB} = {puzzle.answer} m.
+                ⏱ Tempo esgotado! A resposta era{" "}
+                {askFor === "c" ? scenario.itemC : askFor === "a" ? scenario.itemA : scenario.itemB}{" "}
+                = {puzzle.answer} m.
               </span>
             ) : (
               <span className="text-destructive">
-                Era {askFor === "c" ? scenario.itemC : askFor === "a" ? scenario.itemA : scenario.itemB} = {puzzle.answer} m. Você escolheu {picked} m.
+                Era{" "}
+                {askFor === "c" ? scenario.itemC : askFor === "a" ? scenario.itemA : scenario.itemB}{" "}
+                = {puzzle.answer} m. Você escolheu {picked} m.
               </span>
             )}
             <button
@@ -425,8 +522,7 @@ export function HipotenusaGame({ pushDiary }: Props) {
                   c² = {a}² + {b}² = {a * a} + {b * b} = {a * a + b * b}
                 </div>
                 <div className="rounded bg-muted px-3 py-2 text-foreground">
-                  c = √{a * a + b * b} ={" "}
-                  <span className="text-primary">{c}</span>
+                  c = √{a * a + b * b} = <span className="text-primary">{c}</span>
                 </div>
               </>
             ) : askFor === "a" ? (
@@ -435,8 +531,7 @@ export function HipotenusaGame({ pushDiary }: Props) {
                   a² = c² − b² = {c}² − {b}² = {c * c} − {b * b} = {c * c - b * b}
                 </div>
                 <div className="rounded bg-muted px-3 py-2 text-foreground">
-                  a = √{c * c - b * b} ={" "}
-                  <span className="text-primary">{a}</span>
+                  a = √{c * c - b * b} = <span className="text-primary">{a}</span>
                 </div>
               </>
             ) : (
@@ -445,8 +540,7 @@ export function HipotenusaGame({ pushDiary }: Props) {
                   b² = c² − a² = {c}² − {a}² = {c * c} − {a * a} = {c * c - a * a}
                 </div>
                 <div className="rounded bg-muted px-3 py-2 text-foreground">
-                  b = √{c * c - a * a} ={" "}
-                  <span className="text-primary">{b}</span>
+                  b = √{c * c - a * a} = <span className="text-primary">{b}</span>
                 </div>
               </>
             )
