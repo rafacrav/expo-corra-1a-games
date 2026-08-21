@@ -213,9 +213,27 @@ export function ParabolaGame({
         </div>
 
         {/* Controls */}
-        <div className="grid gap-3 sm:grid-cols-3">
-          <Slider label="Ângulo θ" value={angle} min={10} max={85} step={1} unit="°" onChange={setAngle} disabled={phase !== "idle"} />
-          <Slider label="Velocidade v₀" value={v0} min={5} max={30} step={0.5} unit=" m/s" onChange={setV0} disabled={phase !== "idle"} />
+        <fieldset disabled={phase !== "idle"} className="grid gap-3 sm:grid-cols-3">
+          <Slider
+            label="Ângulo θ"
+            value={angle}
+            min={10}
+            max={85}
+            step={1}
+            unit="°"
+            onChange={setAngle}
+            disabled={phase === "playing"}
+          />
+          <Slider
+            label="Velocidade v₀"
+            value={v0}
+            min={5}
+            max={30}
+            step={0.5}
+            unit=" m/s"
+            onChange={setV0}
+            disabled={phase === "playing"}
+          />
           <Slider
             label={vDog === 0 ? "Cachorro (AUTO)" : "Cachorro"}
             value={vDog}
@@ -226,13 +244,13 @@ export function ParabolaGame({
             onChange={setVDog}
             disabled={automaticDog || phase !== "idle"}
           />
-        </div>
+        </fieldset>
 
         <div className="flex gap-2">
           <button
             onClick={phase === "done" ? tryAgain : play}
             disabled={phase === "playing"}
-            className="flex-1 rounded-md bg-primary px-4 py-2 font-display text-lg tracking-widest text-primary-foreground shadow-glow-green disabled:opacity-50"
+            className="flex-1 rounded-md bg-primary px-4 py-2 font-display text-lg tracking-widest text-primary-foreground shadow-glow-green transition-colors hover:bg-primary/90 disabled:cursor-not-allowed disabled:bg-primary/60 disabled:opacity-100"
           >
             {phase === "done" ? "TENTAR NOVAMENTE" : "CHUTAR ⚽"}
           </button>
