@@ -1,15 +1,9 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import type { Player } from "@/lib/players";
 import { StickerCard } from "./StickerCard";
 
-export function PackRevealModal({
-  pack,
-  onClose,
-}: {
-  pack: Player[];
-  onClose: () => void;
-}) {
-  // Reordena: raras (douradas) sempre por último — a última figurinha do pacote
+export function PackRevealModal({ pack, onClose }: { pack: Player[]; onClose: () => void }) {
+  // A equipe mantém as raras douradas no fim para valorizar a última revelação do pacote.
   const ordered = useMemo(() => {
     const commons = pack.filter((p) => !p.rare);
     const rares = pack.filter((p) => p.rare);
@@ -18,21 +12,27 @@ export function PackRevealModal({
 
   const [index, setIndex] = useState(0);
   const total = ordered.length;
-  const done = index >= total;
+
+  const advance = useCallback(() => {
+    if (index >= total - 1) {
+      onClose();
+      return;
+    }
+
+    setIndex((currentIndex) => currentIndex + 1);
+  }, [index, onClose, total]);
 
   useEffect(() => {
     const h = (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose();
       if (e.key === "ArrowRight" || e.key === " " || e.key === "Enter") {
         e.preventDefault();
-        setIndex((i) => Math.min(i + 1, total));
+        advance();
       }
     };
     window.addEventListener("keydown", h);
     return () => window.removeEventListener("keydown", h);
-  }, [onClose, total]);
-
-  const advance = () => setIndex((i) => Math.min(i + 1, total));
+  }, [advance, onClose]);
 
   return (
     <div
@@ -49,17 +49,17 @@ export function PackRevealModal({
       </button>
 
       <p className="mb-3 font-display text-xs tracking-widest text-background/90">
-        {done ? "PACOTE COMPLETO" : `FIGURINHA ${index + 1} DE ${total}`}
+        {`FIGURINHA ${index + 1} DE ${total}`}
       </p>
 
-      {/* Pilha de figurinhas sobrepostas */}
+      {/* A interface organiza as figurinhas ainda fechadas em uma pilha. */}
       <div
-        onClick={done ? onClose : advance}
+        onClick={advance}
         className="relative flex h-[420px] w-[280px] cursor-pointer items-center justify-center select-none"
       >
         {ordered.map((p, i) => {
-          const offset = i - index; // pilha: > 0 = atrás, < 0 = já reveladas (descartadas)
-          if (offset < 0) return null; // já passou
+          const offset = i - index;
+          if (offset < 0) return null;
 
           const isTop = offset === 0;
           const stackDepth = Math.min(offset, 4);
@@ -93,7 +93,7 @@ export function PackRevealModal({
                   </div>
                 </div>
               ) : (
-                // Verso das cartas ainda fechadas (atrás)
+                // A interface preserva o suspense exibindo o verso das próximas figurinhas.
                 <div className="h-64 w-44 rounded-md border-2 border-primary-foreground/30 bg-gradient-to-br from-primary to-primary/70 shadow-card">
                   <div className="flex h-full items-center justify-center">
                     <span className="font-display text-3xl tracking-widest text-primary-foreground/80">
@@ -108,10 +108,10 @@ export function PackRevealModal({
       </div>
 
       <button
-        onClick={done ? onClose : advance}
+        onClick={advance}
         className="mt-6 rounded-md bg-primary px-6 py-3 font-display text-base tracking-widest text-primary-foreground shadow-glow-green transition hover:scale-[1.02] active:scale-95"
       >
-        {done ? "FECHAR" : "PRÓXIMA →"}
+        {index === total - 1 ? "CONCLUIR" : "PRÓXIMA →"}
       </button>
       <p className="mt-2 text-xs text-background/70">
         toque na figurinha • {total - index} restante{total - index !== 1 ? "s" : ""}
