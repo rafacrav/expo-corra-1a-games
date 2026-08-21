@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { DiaryEntry } from "@/components/hub/MathDiary";
+import { supabase } from "@/integrations/supabase/client";
 
 const G = 9.81;
 
@@ -12,11 +13,29 @@ export function ParabolaGame({
 }) {
   const [angle, setAngle] = useState(45); // degrees
   const [v0, setV0] = useState(18); // m/s
-  const [vDog, setVDog] = useState(0); // m/s (0 = auto match)
+  const [vDog, setVDog] = useState(10);
+  const [automaticDog, setAutomaticDog] = useState(false);
   const [phase, setPhase] = useState<Phase>("idle");
   const [t, setT] = useState(0);
   const rafRef = useRef<number | null>(null);
   const startRef = useRef<number>(0);
+
+  useEffect(() => {
+    // O jogo consulta somente o perfil autenticado para aplicar a adaptação selecionada no cadastro.
+    void (async () => {
+      const { data: authData } = await supabase.auth.getUser();
+      if (!authData.user) return;
+
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("disability_type")
+        .eq("id", authData.user.id)
+        .maybeSingle();
+      const shouldAutomateDog = profile?.disability_type === "intellectual";
+      setAutomaticDog(shouldAutomateDog);
+      setVDog(shouldAutomateDog ? 0 : 10);
+    })();
+  }, []);
 
   const theta = (angle * Math.PI) / 180;
   const vx = v0 * Math.cos(theta);
@@ -87,10 +106,20 @@ export function ParabolaGame({
   }, [phase]);
 
   const play = () => {
+    if (phase !== "idle") return;
     setT(0);
     setPhase("playing");
   };
+  const tryAgain = () => {
+    setT(0);
+    setPhase("idle");
+  };
   const reset = () => {
+    if (rafRef.current) cancelAnimationFrame(rafRef.current);
+    rafRef.current = null;
+    setAngle(45);
+    setV0(18);
+    setVDog(automaticDog ? 0 : 10);
     setT(0);
     setPhase("idle");
   };
@@ -197,7 +226,7 @@ export function ParabolaGame({
           </svg>
         </div>
 
-        {/* Controls */}
+       
         <div className="grid gap-3 sm:grid-cols-3">
           <Slider
             label="Ângulo θ"
@@ -227,23 +256,23 @@ export function ParabolaGame({
             step={0.5}
             unit=" m/s"
             onChange={setVDog}
-            disabled={phase === "playing"}
+            disabled={automaticDog || phase !== "idle"}
           />
-        </div>
+        </fieldset>
 
         <div className="flex gap-2">
           <button
-            onClick={play}
+            onClick={phase === "done" ? tryAgain : play}
             disabled={phase === "playing"}
             className="flex-1 rounded-md bg-primary px-4 py-2 font-display text-lg tracking-widest text-primary-foreground shadow-glow-green transition-colors hover:bg-primary/90 disabled:cursor-not-allowed disabled:bg-primary/60 disabled:opacity-100"
           >
-            {phase === "done" ? "JOGAR DE NOVO" : "CHUTAR ⚽"}
+            {phase === "done" ? "TENTAR NOVAMENTE" : "CHUTAR ⚽"}
           </button>
           <button
             onClick={reset}
             className="rounded-md border border-border bg-muted px-4 py-2 font-display text-sm tracking-widest text-muted-foreground hover:border-primary"
           >
-            RESET
+            REDEFINIR
           </button>
         </div>
       </div>

@@ -23,12 +23,22 @@ const EDUCATION_LEVELS = [
   "Outro",
 ];
 
+const DISABILITY_TYPES = [
+  { value: "intellectual", label: "Intelectual" },
+  { value: "visual", label: "Visual" },
+  { value: "hearing", label: "Auditiva" },
+  { value: "motor", label: "Motora" },
+  { value: "neurodivergent", label: "Neurodivergência" },
+  { value: "other", label: "Outra ou prefiro não informar" },
+] as const;
+
 function CadastroPage() {
   const navigate = useNavigate();
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [educationLevel, setEducationLevel] = useState("");
   const [hasDisability, setHasDisability] = useState<"sim" | "nao">("nao");
+  const [disabilityType, setDisabilityType] = useState("");
   const [disabilityDescription, setDisabilityDescription] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -40,12 +50,18 @@ function CadastroPage() {
     e.preventDefault();
     setError(null);
 
-    if (!firstName.trim() || !lastName.trim() || !educationLevel || !email.trim() || password.length < 6) {
+    if (
+      !firstName.trim() ||
+      !lastName.trim() ||
+      !educationLevel ||
+      !email.trim() ||
+      password.length < 6
+    ) {
       setError("Preencha todos os campos. Senha precisa ter pelo menos 6 caracteres.");
       return;
     }
-    if (hasDisability === "sim" && !disabilityDescription.trim()) {
-      setError("Por favor, descreva a deficiência ou marque 'Não'.");
+    if (hasDisability === "sim" && !disabilityType) {
+      setError("Selecione o tipo de deficiência ou marque 'Não'.");
       return;
     }
 
@@ -61,6 +77,7 @@ function CadastroPage() {
             last_name: lastName.trim(),
             education_level: educationLevel,
             has_disability: hasDisability === "sim",
+            disability_type: hasDisability === "sim" ? disabilityType : null,
             disability_description: hasDisability === "sim" ? disabilityDescription.trim() : null,
           },
         },
@@ -129,7 +146,8 @@ function CadastroPage() {
           </div>
           <p className="mt-2 text-sm text-muted-foreground">
             Esse é o seu QR code único. <strong className="text-foreground">Baixe</strong> e
-            <strong className="text-foreground"> tire um print</strong> agora — ele identifica você na feira.
+            <strong className="text-foreground"> tire um print</strong> agora — ele identifica você
+            na feira.
           </p>
 
           <div className="mt-6 flex flex-col items-center">
@@ -147,8 +165,8 @@ function CadastroPage() {
             <div className="flex items-start gap-2">
               <Camera className="mt-0.5 h-4 w-4 shrink-0" />
               <p>
-                <strong>Tire um print da tela agora!</strong> Você também pode baixar o QR como imagem
-                pelo botão abaixo.
+                <strong>Tire um print da tela agora!</strong> Você também pode baixar o QR como
+                imagem pelo botão abaixo.
               </p>
             </div>
           </div>
@@ -182,11 +200,16 @@ function CadastroPage() {
   return (
     <div className="flex min-h-dvh items-center justify-center bg-background px-4 py-10">
       <div className="w-full max-w-md">
-        <Link to="/" className="mb-4 inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground">
+        <Link
+          to="/"
+          className="mb-4 inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground"
+        >
           <ArrowLeft className="h-3.5 w-3.5" /> Voltar
         </Link>
         <div className="rounded-2xl border border-border bg-card p-6 shadow-elegant sm:p-8">
-          <h1 className="font-display text-2xl font-bold text-foreground sm:text-3xl">Criar conta</h1>
+          <h1 className="font-display text-2xl font-bold text-foreground sm:text-3xl">
+            Criar conta
+          </h1>
           <p className="mt-1 text-sm text-muted-foreground">
             Vamos gerar seu QR code único pra usar na feira.
           </p>
@@ -224,30 +247,58 @@ function CadastroPage() {
               >
                 <option value="">— escolha —</option>
                 {EDUCATION_LEVELS.map((lvl) => (
-                  <option key={lvl} value={lvl}>{lvl}</option>
+                  <option key={lvl} value={lvl}>
+                    {lvl}
+                  </option>
                 ))}
               </select>
             </Field>
 
             <Field label="Possui alguma deficiência?" required>
               <div className="flex gap-2">
-                <RadioPill checked={hasDisability === "nao"} onClick={() => setHasDisability("nao")}>Não</RadioPill>
-                <RadioPill checked={hasDisability === "sim"} onClick={() => setHasDisability("sim")}>Sim</RadioPill>
+                <RadioPill
+                  checked={hasDisability === "nao"}
+                  onClick={() => setHasDisability("nao")}
+                >
+                  Não
+                </RadioPill>
+                <RadioPill
+                  checked={hasDisability === "sim"}
+                  onClick={() => setHasDisability("sim")}
+                >
+                  Sim
+                </RadioPill>
               </div>
             </Field>
 
             {hasDisability === "sim" && (
-              <Field label="Qual deficiência?" required>
-                <input
-                  type="text"
-                  value={disabilityDescription}
-                  onChange={(e) => setDisabilityDescription(e.target.value)}
-                  maxLength={200}
-                  placeholder="Ex: auditiva, visual, motora, TEA…"
-                  className="input"
-                  required
-                />
-              </Field>
+              <div className="space-y-4">
+                <Field label="Tipo de deficiência" required>
+                  <select
+                    value={disabilityType}
+                    onChange={(e) => setDisabilityType(e.target.value)}
+                    className="input"
+                    required
+                  >
+                    <option value="">— escolha —</option>
+                    {DISABILITY_TYPES.map((type) => (
+                      <option key={type.value} value={type.value}>
+                        {type.label}
+                      </option>
+                    ))}
+                  </select>
+                </Field>
+                <Field label="Observação (opcional)">
+                  <input
+                    type="text"
+                    value={disabilityDescription}
+                    onChange={(e) => setDisabilityDescription(e.target.value)}
+                    maxLength={200}
+                    placeholder="Informe apenas o necessário para acessibilidade"
+                    className="input"
+                  />
+                </Field>
+              </div>
             )}
 
             <Field label="E-mail" required>
@@ -302,18 +353,35 @@ function CadastroPage() {
   );
 }
 
-function Field({ label, required, children }: { label: string; required?: boolean; children: React.ReactNode }) {
+function Field({
+  label,
+  required,
+  children,
+}: {
+  label: string;
+  required?: boolean;
+  children: React.ReactNode;
+}) {
   return (
     <label className="block">
       <span className="mb-1 block text-xs font-medium text-foreground">
-        {label}{required && <span className="text-primary"> *</span>}
+        {label}
+        {required && <span className="text-primary"> *</span>}
       </span>
       {children}
     </label>
   );
 }
 
-function RadioPill({ checked, onClick, children }: { checked: boolean; onClick: () => void; children: React.ReactNode }) {
+function RadioPill({
+  checked,
+  onClick,
+  children,
+}: {
+  checked: boolean;
+  onClick: () => void;
+  children: React.ReactNode;
+}) {
   return (
     <button
       type="button"
