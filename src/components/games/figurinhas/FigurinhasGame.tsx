@@ -86,7 +86,7 @@ export function FigurinhasGame({
   const rareCollected = PLAYERS.filter((p) => p.rare && state.collection[p.id]).length;
 
   return (
-    <div className="grid gap-4 lg:grid-cols-[320px_1fr_320px]">
+    <div className="grid gap-4 xl:grid-cols-[320px_1fr_320px]">
       <div className="space-y-4">
         <PackOpener
           onOpen={openPack}

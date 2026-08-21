@@ -7,16 +7,24 @@ type Phase = "idle" | "playing" | "done";
 
 export function ParabolaGame({
   pushDiary,
+  automaticDog,
 }: {
   pushDiary: (e: Omit<DiaryEntry, "id" | "at">) => void;
+  automaticDog: boolean;
 }) {
   const [angle, setAngle] = useState(45); // degrees
   const [v0, setV0] = useState(18); // m/s
-  const [vDog, setVDog] = useState(0); // m/s (0 = auto match)
+  const [vDog, setVDog] = useState(automaticDog ? 0 : 10); // m/s (0 = auto match)
   const [phase, setPhase] = useState<Phase>("idle");
   const [t, setT] = useState(0);
   const rafRef = useRef<number | null>(null);
   const startRef = useRef<number>(0);
+
+  useEffect(() => {
+    setVDog(automaticDog ? 0 : 10);
+    setT(0);
+    setPhase("idle");
+  }, [automaticDog]);
 
   const theta = (angle * Math.PI) / 180;
   const vx = v0 * Math.cos(theta);
@@ -87,10 +95,22 @@ export function ParabolaGame({
   }, [phase]);
 
   const play = () => {
+    if (phase !== "idle") return;
     setT(0);
     setPhase("playing");
   };
+
+  const tryAgain = () => {
+    setT(0);
+    setPhase("idle");
+  };
+
   const reset = () => {
+    if (rafRef.current) cancelAnimationFrame(rafRef.current);
+    rafRef.current = null;
+    setAngle(45);
+    setV0(18);
+    setVDog(automaticDog ? 0 : 10);
     setT(0);
     setPhase("idle");
   };
@@ -102,7 +122,7 @@ export function ParabolaGame({
   const caught = phase === "done" && catchErr < 0.5;
 
   return (
-    <div className="grid gap-4 lg:grid-cols-[1fr_320px]">
+    <div className="grid gap-4 xl:grid-cols-[1fr_320px]">
       <div className="space-y-3 rounded-xl border border-border bg-card p-4">
         {/* Field */}
         <div className="overflow-hidden rounded-lg border border-border bg-gradient-to-b from-sky-100 to-emerald-50">
@@ -127,8 +147,22 @@ export function ParabolaGame({
               const p = toPx(xm, 0);
               return (
                 <g key={i}>
-                  <line x1={p.x} y1={groundY} x2={p.x} y2={groundY + 4} stroke="#065f46" strokeWidth="1" />
-                  <text x={p.x} y={groundY + 14} fontSize="9" fill="#065f46" textAnchor="middle" fontFamily="monospace">
+                  <line
+                    x1={p.x}
+                    y1={groundY}
+                    x2={p.x}
+                    y2={groundY + 4}
+                    stroke="#065f46"
+                    strokeWidth="1"
+                  />
+                  <text
+                    x={p.x}
+                    y={groundY + 14}
+                    fontSize="9"
+                    fill="#065f46"
+                    textAnchor="middle"
+                    fontFamily="monospace"
+                  >
                     {xm}m
                   </text>
                 </g>
@@ -185,33 +219,51 @@ export function ParabolaGame({
 
         {/* Controls */}
         <div className="grid gap-3 sm:grid-cols-3">
-          <Slider label="Ângulo θ" value={angle} min={10} max={85} step={1} unit="°" onChange={setAngle} disabled={phase === "playing"} />
-          <Slider label="Velocidade v₀" value={v0} min={5} max={30} step={0.5} unit=" m/s" onChange={setV0} disabled={phase === "playing"} />
           <Slider
-            label={vDog === 0 ? "Cachorro (AUTO)" : "Cachorro"}
+            label="Ângulo θ"
+            value={angle}
+            min={10}
+            max={85}
+            step={1}
+            unit="°"
+            onChange={setAngle}
+            disabled={phase !== "idle"}
+          />
+          <Slider
+            label="Velocidade v₀"
+            value={v0}
+            min={5}
+            max={30}
+            step={0.5}
+            unit=" m/s"
+            onChange={setV0}
+            disabled={phase !== "idle"}
+          />
+          <Slider
+            label={automaticDog ? "Cachorro (AUTO)" : "Cachorro"}
             value={vDog}
             min={0}
             max={30}
             step={0.5}
             unit=" m/s"
             onChange={setVDog}
-            disabled={phase === "playing"}
+            disabled={automaticDog || phase !== "idle"}
           />
         </div>
 
         <div className="flex gap-2">
           <button
-            onClick={play}
+            onClick={phase === "done" ? tryAgain : play}
             disabled={phase === "playing"}
-            className="flex-1 rounded-md bg-gradient-green px-4 py-2 font-display text-lg tracking-widest text-primary-foreground shadow-glow-green disabled:opacity-50"
+            className="flex-1 rounded-md bg-primary px-4 py-2 font-display text-lg tracking-widest text-primary-foreground shadow-glow-green transition-colors hover:bg-primary/90 disabled:cursor-not-allowed disabled:bg-primary/60 disabled:opacity-100"
           >
-            {phase === "done" ? "JOGAR DE NOVO" : "CHUTAR ⚽"}
+            {phase === "done" ? "TENTAR NOVAMENTE" : "CHUTAR ⚽"}
           </button>
           <button
             onClick={reset}
             className="rounded-md border border-border bg-muted px-4 py-2 font-display text-sm tracking-widest text-muted-foreground hover:border-primary"
           >
-            RESET
+            REDEFINIR
           </button>
         </div>
       </div>
@@ -232,11 +284,7 @@ export function ParabolaGame({
           formula={`T = 2·v_y / g = 2·${vy.toFixed(2)} / ${G}`}
           value={`${tFlight.toFixed(2)} s`}
         />
-        <Block
-          label="Altura máxima"
-          formula={`H = v_y² / (2g)`}
-          value={`${hMax.toFixed(2)} m`}
-        />
+        <Block label="Altura máxima" formula={`H = v_y² / (2g)`} value={`${hMax.toFixed(2)} m`} />
         <Block
           label="Alcance (onde a bola cai)"
           formula={`R = v₀²·sen(2θ) / g`}
@@ -251,7 +299,7 @@ export function ParabolaGame({
         {phase === "done" && (
           <p
             className={`rounded-md p-2 text-center font-display text-lg ${
-              caught ? "bg-gradient-green text-primary-foreground" : "bg-destructive/15 text-destructive"
+              caught ? "bg-primary text-primary-foreground" : "bg-destructive/15 text-destructive"
             }`}
           >
             {caught ? "🎯 INTERCEPTOU!" : `Errou por ${catchErr.toFixed(2)} m`}
@@ -316,10 +364,16 @@ function Block({
   accent?: boolean;
 }) {
   return (
-    <div className={`rounded-md border p-3 ${accent ? "border-primary bg-primary/5" : "border-border bg-muted"}`}>
+    <div
+      className={`rounded-md border p-3 ${accent ? "border-primary bg-primary/5" : "border-border bg-muted"}`}
+    >
       <p className="text-[11px] uppercase tracking-widest text-muted-foreground">{label}</p>
-      <code className="block whitespace-pre py-1 font-mono text-[11px] text-primary">{formula}</code>
-      <p className={`font-display text-2xl ${accent ? "text-gradient-gold" : "text-foreground"}`}>{value}</p>
+      <code className="block whitespace-pre py-1 font-mono text-[11px] text-primary">
+        {formula}
+      </code>
+      <p className={`font-display text-2xl ${accent ? "text-gradient-gold" : "text-foreground"}`}>
+        {value}
+      </p>
     </div>
   );
 }
