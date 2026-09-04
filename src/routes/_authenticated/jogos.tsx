@@ -98,6 +98,8 @@ function HubPage() {
   const [diary, setDiary] = useState<DiaryEntry[]>([]);
   const [profile, setProfile] = useState<{ first_name: string; last_name: string } | null>(null);
   const [userId, setUserId] = useState<string | null>(null);
+  const [isAdmin, setIsAdmin] = useState(false);
+  const askIsAdmin = useServerFn(checkIsAdmin);
 
   useEffect(() => {
     (async () => {
@@ -112,8 +114,15 @@ function HubPage() {
         .eq("id", user.id)
         .maybeSingle();
       if (data) setProfile(data);
+      try {
+        const out = await askIsAdmin({});
+        setIsAdmin(out.isAdmin);
+      } catch {
+        /* ignora */
+      }
     })();
-  }, []);
+  }, [askIsAdmin]);
+
 
   const pushDiary = useCallback((e: Omit<DiaryEntry, "id" | "at">) => {
     setDiary((prev) =>
