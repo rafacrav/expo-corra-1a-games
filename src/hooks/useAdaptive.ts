@@ -25,6 +25,8 @@ export function useAdaptive(game: string) {
   const sessionIdRef = useRef<string | null>(null);
   const savingRef = useRef(false);
   const startedRef = useRef<number>(Date.now());
+  const statsRef = useRef({ correct: 0, wrong: 0, rounds: 0, streak: 0, best: 0 });
+
 
 
   const call = useCallback(
