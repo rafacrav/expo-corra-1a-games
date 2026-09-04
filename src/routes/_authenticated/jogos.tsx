@@ -1,6 +1,9 @@
 import { useCallback, useEffect, useState } from "react";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { useServerFn } from "@tanstack/react-start";
+import { checkIsAdmin } from "@/lib/admin.functions";
 import {
+
   Album as AlbumIcon,
   Calculator,
   ChevronLeft,
