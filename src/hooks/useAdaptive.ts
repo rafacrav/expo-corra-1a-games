@@ -57,10 +57,52 @@ export function useAdaptive(game: string) {
     void call(DEFAULT_ADAPTIVE.level);
   }, [call]);
 
+  const persist = useCallback(
+    async (level: number) => {
+      if (savingRef.current) return;
+      savingRef.current = true;
+      try {
+        const s = statsRef.current;
+        const out = await save({
+          data: {
+            id: sessionIdRef.current,
+            game,
+            correct: s.correct,
+            wrong: s.wrong,
+            rounds: s.rounds,
+            bestStreak: s.best,
+            aiLevel: level,
+            durationSeconds: Math.round((Date.now() - startedRef.current) / 1000),
+          },
+        });
+        if (out.id) sessionIdRef.current = out.id;
+      } catch {
+        /* silencioso: não atrapalha o jogo */
+      } finally {
+        savingRef.current = false;
+      }
+    },
+    [game, save],
+  );
+
   const record = useCallback(
     (r: RoundResult) => {
       historyRef.current = [...historyRef.current, r].slice(-20);
-      setProfile((prev) => heuristicAdjust(prev, historyRef.current));
+      const s = statsRef.current;
+      s.rounds += 1;
+      if (r.correct) {
+        s.correct += 1;
+        s.streak += 1;
+        s.best = Math.max(s.best, s.streak);
+      } else {
+        s.wrong += 1;
+        s.streak = 0;
+      }
+      setProfile((prev) => {
+        const next = heuristicAdjust(prev, historyRef.current);
+        void persist(next.level);
+        return next;
+      });
       if (historyRef.current.length % EVERY === 0) {
         setProfile((prev) => {
           void call(prev.level);
@@ -68,14 +110,18 @@ export function useAdaptive(game: string) {
         });
       }
     },
-    [call],
+    [call, persist],
   );
 
   const reset = useCallback(() => {
     historyRef.current = [];
+    statsRef.current = { correct: 0, wrong: 0, rounds: 0, streak: 0, best: 0 };
+    sessionIdRef.current = null;
+    startedRef.current = Date.now();
     setProfile(DEFAULT_ADAPTIVE);
     void call(DEFAULT_ADAPTIVE.level);
   }, [call]);
+
 
   return {
     profile,
