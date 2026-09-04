@@ -107,6 +107,36 @@ function AdminPage() {
     );
   }, [data, q]);
 
+  const gameChart = useMemo(
+    () =>
+      (data?.byGame ?? []).map((g) => ({
+        name: GAME_NAMES[g.game] ?? g.game,
+        Acertos: g.correct,
+        Erros: g.wrong,
+        Aproveitamento:
+          g.correct + g.wrong ? Math.round((g.correct / (g.correct + g.wrong)) * 100) : 0,
+        "Nível IA": g.avgLevel ? Number(g.avgLevel.toFixed(1)) : 0,
+      })),
+    [data],
+  );
+
+  const topPlayers = useMemo(
+    () =>
+      (data?.players ?? [])
+        .filter((p) => p.correct + p.wrong > 0)
+        .sort((a, b) => b.correct - a.correct)
+        .slice(0, 10)
+        .map((p) => ({
+          name: `${p.firstName} ${p.lastName}`.trim(),
+          Acertos: p.correct,
+          Erros: p.wrong,
+        }))
+        .reverse(),
+    [data],
+  );
+
+
+
   const exportCsv = () => {
     if (!data) return;
     const head = [
