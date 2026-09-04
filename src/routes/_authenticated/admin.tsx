@@ -2,7 +2,43 @@ import { useEffect, useMemo, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { ArrowLeft, Download, Loader2, Search, ShieldAlert, Users } from "lucide-react";
+import {
+  Area,
+  AreaChart,
+  Bar,
+  BarChart,
+  CartesianGrid,
+  Cell,
+  ComposedChart,
+  Legend,
+  Line,
+  Pie,
+  PieChart,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from "recharts";
 import { getAdminOverview, type AdminOverview } from "@/lib/admin.functions";
+
+const AXIS_TICK = { fontSize: 11, fill: "var(--muted-foreground)" } as const;
+const TOOLTIP_STYLE = {
+  background: "var(--card)",
+  border: "1px solid var(--border)",
+  borderRadius: 12,
+  fontSize: 12,
+  color: "var(--foreground)",
+} as const;
+const PALETTE = [
+  "var(--primary)",
+  "#60a5fa",
+  "#38bdf8",
+  "#818cf8",
+  "#22d3ee",
+  "#a78bfa",
+  "#94a3b8",
+];
+
 
 export const Route = createFileRoute("/_authenticated/admin")({
   head: () => ({
