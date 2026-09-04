@@ -31,33 +31,38 @@ function isCleanInt(n: number | null): n is number {
 
 type Puzzle = { a: number; b: number; op: Op; result: number };
 
-function generate(): Puzzle {
+function generate(round = 1): Puzzle {
+  // Escala de dificuldade: rodada efetiva controla o tamanho dos números
+  // e libera operadores mais complexos aos poucos.
+  const k = Math.min(2, 0.5 + round / 10); // 0.6 → 2
+  const pool: Op[] = round <= 3 ? ["+", "−", "×"] : round <= 7 ? ["+", "−", "×", "÷"] : OPS;
   for (let i = 0; i < 200; i++) {
-    const op = OPS[Math.floor(Math.random() * OPS.length)];
+    const op = pool[Math.floor(Math.random() * pool.length)];
     let a: number, b: number;
     switch (op) {
       case "+":
       case "−":
-        a = 1 + Math.floor(Math.random() * 30);
-        b = 1 + Math.floor(Math.random() * 30);
+        a = 1 + Math.floor(Math.random() * Math.round(15 * k));
+        b = 1 + Math.floor(Math.random() * Math.round(15 * k));
         break;
       case "×":
-        a = 2 + Math.floor(Math.random() * 11);
-        b = 2 + Math.floor(Math.random() * 11);
+        a = 2 + Math.floor(Math.random() * Math.round(6 * k));
+        b = 2 + Math.floor(Math.random() * Math.round(6 * k));
         break;
       case "÷":
-        b = 2 + Math.floor(Math.random() * 9);
-        a = b * (2 + Math.floor(Math.random() * 9));
+        b = 2 + Math.floor(Math.random() * Math.round(5 * k));
+        a = b * (2 + Math.floor(Math.random() * Math.round(5 * k)));
         break;
       case "^":
-        a = 2 + Math.floor(Math.random() * 8);
+        a = 2 + Math.floor(Math.random() * Math.round(4 * k));
         b = 2 + Math.floor(Math.random() * 3);
         break;
       case "√":
         b = 2 + Math.floor(Math.random() * 2); // raiz 2 ou 3
-        a = Math.pow(2 + Math.floor(Math.random() * 6), b);
+        a = Math.pow(2 + Math.floor(Math.random() * Math.round(3 * k)), b);
         break;
     }
+
     const r = apply(a, op, b);
     if (!isCleanInt(r)) continue;
     const result = Math.round(r);
