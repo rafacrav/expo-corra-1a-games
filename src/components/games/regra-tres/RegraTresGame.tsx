@@ -1,5 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import type { DiaryEntry } from "@/components/hub/MathDiary";
+import { AdaptiveBadge } from "@/components/hub/AdaptiveBadge";
+import { useAdaptive } from "@/hooks/useAdaptive";
 
 type Scenario = {
   emoji: string;
@@ -173,6 +175,7 @@ function maxTimeForRound(round: number) {
 type Props = { pushDiary: (e: Omit<DiaryEntry, "id" | "at">) => void };
 
 export function RegraTresGame({ pushDiary }: Props) {
+  const adaptive = useAdaptive("regra-tres");
   const [round, setRound] = useState(1);
   const [puzzle, setPuzzle] = useState<Puzzle>(() => generate(1));
   const [options, setOptions] = useState<number[]>(() => buildOptions(puzzle.answer));
@@ -188,7 +191,7 @@ export function RegraTresGame({ pushDiary }: Props) {
   const [now, setNow] = useState<number>(() => Date.now());
   const [lastTime, setLastTime] = useState<number | null>(null);
 
-  const maxTime = maxTimeForRound(round);
+  const maxTime = adaptive.timeFor(maxTimeForRound(adaptive.roundFor(round)));
   const elapsed = (now - startedAt) / 1000;
   const remaining = Math.max(0, maxTime - elapsed);
 
@@ -206,6 +209,7 @@ export function RegraTresGame({ pushDiary }: Props) {
       setPicked(timedOut ? -1 : n);
       setReveal(true);
       setLastTime(t);
+      adaptive.record({ round, correct: ok, timedOut, seconds: t, maxSeconds: maxTime });
       if (ok) {
         setHits((h) => h + 1);
         setStreak((s) => {
@@ -230,7 +234,7 @@ export function RegraTresGame({ pushDiary }: Props) {
             : `errou — x = ${answer}`,
       });
     },
-    [puzzle, reveal, startedAt, pushDiary],
+    [puzzle, reveal, startedAt, pushDiary, adaptive, round, maxTime],
   );
 
   useEffect(() => {
@@ -244,7 +248,7 @@ export function RegraTresGame({ pushDiary }: Props) {
       return;
     }
     const nr = round + 1;
-    const p = generate(nr);
+    const p = generate(adaptive.roundFor(nr));
     setRound(nr);
     setPuzzle(p);
     setOptions(buildOptions(p.answer));
@@ -256,7 +260,8 @@ export function RegraTresGame({ pushDiary }: Props) {
   }, [round]);
 
   const restart = useCallback(() => {
-    const p = generate(1);
+    adaptive.reset();
+    const p = generate(adaptive.roundFor(1));
     setRound(1);
     setPuzzle(p);
     setOptions(buildOptions(p.answer));
@@ -316,6 +321,7 @@ export function RegraTresGame({ pushDiary }: Props) {
     <div className="grid gap-4 xl:grid-cols-[1.4fr_1fr]">
       {/* Painel do jogo */}
       <div className="rounded-2xl border border-border bg-card p-5">
+        <AdaptiveBadge profile={adaptive.profile} thinking={adaptive.thinking} />
         <div className="mb-3 flex items-center justify-between gap-3">
           <div className="flex items-center gap-2 text-xs">
             <span className="rounded bg-muted px-2 py-1 font-mono text-foreground">
