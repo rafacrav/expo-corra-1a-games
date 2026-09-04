@@ -183,41 +183,162 @@ function AdminPage() {
             {data.signupsByDay.length === 0 ? (
               <p className="mt-3 text-sm text-muted-foreground">Nenhum cadastro ainda.</p>
             ) : (
-              <div className="mt-4 flex h-32 items-end gap-1.5">
-                {data.signupsByDay.map((d) => (
-                  <div key={d.day} className="flex flex-1 flex-col items-center gap-1">
-                    <div
-                      className="w-full rounded-t bg-primary/80"
-                      style={{ height: `${(d.count / maxDay) * 100}%`, minHeight: 4 }}
-                      title={`${d.day}: ${d.count}`}
+              <div className="mt-4 h-56">
+                <ResponsiveContainer width="100%" height="100%">
+                  <AreaChart data={data.signupsByDay} margin={{ left: -20, right: 8, top: 8 }}>
+                    <defs>
+                      <linearGradient id="gSignups" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stopColor="var(--primary)" stopOpacity={0.45} />
+                        <stop offset="100%" stopColor="var(--primary)" stopOpacity={0.02} />
+                      </linearGradient>
+                    </defs>
+                    <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false} />
+                    <XAxis
+                      dataKey="day"
+                      tickFormatter={(d: string) => d.slice(8)}
+                      tick={AXIS_TICK}
+                      tickLine={false}
+                      axisLine={false}
                     />
-                    <span className="text-[9px] text-muted-foreground">{d.day.slice(8)}</span>
-                  </div>
-                ))}
+                    <YAxis allowDecimals={false} tick={AXIS_TICK} tickLine={false} axisLine={false} />
+                    <Tooltip contentStyle={TOOLTIP_STYLE} labelStyle={{ color: "var(--foreground)" }} />
+                    <Area
+                      type="monotone"
+                      dataKey="count"
+                      name="Cadastros"
+                      stroke="var(--primary)"
+                      strokeWidth={2}
+                      fill="url(#gSignups)"
+                    />
+                  </AreaChart>
+                </ResponsiveContainer>
               </div>
             )}
           </div>
 
           <div className="rounded-2xl border border-border bg-card p-4">
             <h2 className="font-display text-base font-semibold text-foreground">Escolaridade</h2>
-            <ul className="mt-3 space-y-2">
-              {data.byEducation.length === 0 && (
-                <li className="text-sm text-muted-foreground">Sem dados.</li>
-              )}
-              {data.byEducation.map((e) => (
-                <li key={e.label} className="flex items-center gap-2 text-sm">
-                  <span className="w-40 shrink-0 truncate text-foreground">{e.label}</span>
-                  <div className="h-2 flex-1 rounded-full bg-muted">
-                    <div
-                      className="h-2 rounded-full bg-primary"
-                      style={{ width: `${(e.count / Math.max(1, t.players)) * 100}%` }}
+            {data.byEducation.length === 0 ? (
+              <p className="mt-3 text-sm text-muted-foreground">Sem dados.</p>
+            ) : (
+              <div className="mt-4 h-56">
+                <ResponsiveContainer width="100%" height="100%">
+                  <PieChart>
+                    <Pie
+                      data={data.byEducation}
+                      dataKey="count"
+                      nameKey="label"
+                      innerRadius={45}
+                      outerRadius={80}
+                      paddingAngle={2}
+                    >
+                      {data.byEducation.map((e, i) => (
+                        <Cell key={e.label} fill={PALETTE[i % PALETTE.length]} />
+                      ))}
+                    </Pie>
+                    <Legend
+                      wrapperStyle={{ fontSize: 11, color: "var(--muted-foreground)" }}
+                      iconSize={8}
                     />
-                  </div>
-                  <span className="w-8 text-right text-muted-foreground">{e.count}</span>
-                </li>
-              ))}
-            </ul>
+                    <Tooltip contentStyle={TOOLTIP_STYLE} />
+                  </PieChart>
+                </ResponsiveContainer>
+              </div>
+            )}
           </div>
+        </section>
+
+        <section className="grid gap-4 lg:grid-cols-2">
+          <div className="rounded-2xl border border-border bg-card p-4">
+            <h2 className="font-display text-base font-semibold text-foreground">
+              Acertos e erros por jogo
+            </h2>
+            {gameChart.length === 0 ? (
+              <p className="mt-3 text-sm text-muted-foreground">Nenhuma partida registrada ainda.</p>
+            ) : (
+              <div className="mt-4 h-64">
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={gameChart} margin={{ left: -20, right: 8, top: 8 }}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false} />
+                    <XAxis dataKey="name" tick={AXIS_TICK} tickLine={false} axisLine={false} interval={0} />
+                    <YAxis allowDecimals={false} tick={AXIS_TICK} tickLine={false} axisLine={false} />
+                    <Tooltip contentStyle={TOOLTIP_STYLE} cursor={{ fill: "var(--muted)" }} />
+                    <Legend wrapperStyle={{ fontSize: 11 }} iconSize={8} />
+                    <Bar dataKey="Acertos" fill="var(--primary)" radius={[4, 4, 0, 0]} />
+                    <Bar dataKey="Erros" fill="var(--destructive)" radius={[4, 4, 0, 0]} />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+            )}
+          </div>
+
+          <div className="rounded-2xl border border-border bg-card p-4">
+            <h2 className="font-display text-base font-semibold text-foreground">
+              Aproveitamento e nível da IA por jogo
+            </h2>
+            {gameChart.length === 0 ? (
+              <p className="mt-3 text-sm text-muted-foreground">Nenhuma partida registrada ainda.</p>
+            ) : (
+              <div className="mt-4 h-64">
+                <ResponsiveContainer width="100%" height="100%">
+                  <ComposedChart data={gameChart} margin={{ left: -20, right: 8, top: 8 }}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false} />
+                    <XAxis dataKey="name" tick={AXIS_TICK} tickLine={false} axisLine={false} interval={0} />
+                    <YAxis yAxisId="l" domain={[0, 100]} tick={AXIS_TICK} tickLine={false} axisLine={false} />
+                    <YAxis
+                      yAxisId="r"
+                      orientation="right"
+                      domain={[0, 5]}
+                      tick={AXIS_TICK}
+                      tickLine={false}
+                      axisLine={false}
+                    />
+                    <Tooltip contentStyle={TOOLTIP_STYLE} cursor={{ fill: "var(--muted)" }} />
+                    <Legend wrapperStyle={{ fontSize: 11 }} iconSize={8} />
+                    <Bar yAxisId="l" dataKey="Aproveitamento" fill="var(--primary)" radius={[4, 4, 0, 0]} />
+                    <Line
+                      yAxisId="r"
+                      type="monotone"
+                      dataKey="Nível IA"
+                      stroke="var(--accent-foreground, #f59e0b)"
+                      strokeWidth={2}
+                      dot={{ r: 3 }}
+                    />
+                  </ComposedChart>
+                </ResponsiveContainer>
+              </div>
+            )}
+          </div>
+        </section>
+
+        <section className="rounded-2xl border border-border bg-card p-4">
+          <h2 className="font-display text-base font-semibold text-foreground">
+            Top 10 jogadores por acertos
+          </h2>
+          {topPlayers.length === 0 ? (
+            <p className="mt-3 text-sm text-muted-foreground">Nenhuma partida registrada ainda.</p>
+          ) : (
+            <div className="mt-4" style={{ height: Math.max(200, topPlayers.length * 36) }}>
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={topPlayers} layout="vertical" margin={{ left: 12, right: 16 }}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" horizontal={false} />
+                  <XAxis type="number" allowDecimals={false} tick={AXIS_TICK} tickLine={false} axisLine={false} />
+                  <YAxis
+                    type="category"
+                    dataKey="name"
+                    width={140}
+                    tick={AXIS_TICK}
+                    tickLine={false}
+                    axisLine={false}
+                  />
+                  <Tooltip contentStyle={TOOLTIP_STYLE} cursor={{ fill: "var(--muted)" }} />
+                  <Legend wrapperStyle={{ fontSize: 11 }} iconSize={8} />
+                  <Bar dataKey="Acertos" stackId="a" fill="var(--primary)" radius={[0, 0, 0, 0]} />
+                  <Bar dataKey="Erros" stackId="a" fill="var(--destructive)" radius={[0, 4, 4, 0]} />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+          )}
         </section>
 
         <section className="rounded-2xl border border-border bg-card p-4">
@@ -263,6 +384,7 @@ function AdminPage() {
             </div>
           )}
         </section>
+
 
         <section className="rounded-2xl border border-border bg-card p-4">
           <div className="flex flex-wrap items-center justify-between gap-3">
