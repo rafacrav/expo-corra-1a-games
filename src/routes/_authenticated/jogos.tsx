@@ -1,12 +1,16 @@
 import { useCallback, useEffect, useState } from "react";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { useServerFn } from "@tanstack/react-start";
+import { checkIsAdmin } from "@/lib/admin.functions";
 import {
+
   Album as AlbumIcon,
   Calculator,
   ChevronLeft,
   LogOut,
   Move,
   Scale,
+  ShieldCheck,
   ShoppingCart,
   Sparkles,
   Target,
@@ -98,6 +102,8 @@ function HubPage() {
   const [diary, setDiary] = useState<DiaryEntry[]>([]);
   const [profile, setProfile] = useState<{ first_name: string; last_name: string } | null>(null);
   const [userId, setUserId] = useState<string | null>(null);
+  const [isAdmin, setIsAdmin] = useState(false);
+  const askIsAdmin = useServerFn(checkIsAdmin);
 
   useEffect(() => {
     (async () => {
@@ -112,8 +118,15 @@ function HubPage() {
         .eq("id", user.id)
         .maybeSingle();
       if (data) setProfile(data);
+      try {
+        const out = await askIsAdmin({});
+        setIsAdmin(out.isAdmin);
+      } catch {
+        /* ignora */
+      }
     })();
-  }, []);
+  }, [askIsAdmin]);
+
 
   const pushDiary = useCallback((e: Omit<DiaryEntry, "id" | "at">) => {
     setDiary((prev) =>
@@ -146,6 +159,14 @@ function HubPage() {
             </div>
           </Link>
           <div className="flex items-center gap-3">
+            {isAdmin && (
+              <Link
+                to="/admin"
+                className="inline-flex items-center gap-1.5 rounded-md border border-border bg-muted px-3 py-1.5 text-xs font-medium text-foreground hover:bg-accent"
+              >
+                <ShieldCheck className="h-3.5 w-3.5" /> Painel
+              </Link>
+            )}
             <div className="hidden text-right sm:block">
               <p className="font-display text-sm text-primary">
                 {profile ? `${profile.first_name} ${profile.last_name}` : "Jogador"}
@@ -154,6 +175,7 @@ function HubPage() {
                 {userId ? userId.slice(0, 13) + "…" : "—"}
               </p>
             </div>
+
             <button
               onClick={handleLogout}
               className="inline-flex items-center gap-1.5 rounded-md border border-border bg-muted px-3 py-1.5 text-xs font-medium text-foreground hover:bg-accent"

@@ -14,6 +14,7 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedJogosRouteImport } from './routes/_authenticated/jogos'
+import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 
 const CadastroRoute = CadastroRouteImport.update({
   id: '/cadastro',
@@ -39,17 +40,24 @@ const AuthenticatedJogosRoute = AuthenticatedJogosRouteImport.update({
   path: '/jogos',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/cadastro': typeof CadastroRoute
+  '/admin': typeof AuthenticatedAdminRoute
   '/jogos': typeof AuthenticatedJogosRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/cadastro': typeof CadastroRoute
+  '/admin': typeof AuthenticatedAdminRoute
   '/jogos': typeof AuthenticatedJogosRoute
 }
 export interface FileRoutesById {
@@ -58,19 +66,21 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
   '/cadastro': typeof CadastroRoute
+  '/_authenticated/admin': typeof AuthenticatedAdminRoute
   '/_authenticated/jogos': typeof AuthenticatedJogosRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/auth' | '/cadastro' | '/jogos'
+  fullPaths: '/' | '/auth' | '/cadastro' | '/admin' | '/jogos'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/auth' | '/cadastro' | '/jogos'
+  to: '/' | '/auth' | '/cadastro' | '/admin' | '/jogos'
   id:
     | '__root__'
     | '/'
     | '/_authenticated'
     | '/auth'
     | '/cadastro'
+    | '/_authenticated/admin'
     | '/_authenticated/jogos'
   fileRoutesById: FileRoutesById
 }
@@ -118,14 +128,23 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedJogosRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/admin': {
+      id: '/_authenticated/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AuthenticatedAdminRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
   }
 }
 
 interface AuthenticatedRouteRouteChildren {
+  AuthenticatedAdminRoute: typeof AuthenticatedAdminRoute
   AuthenticatedJogosRoute: typeof AuthenticatedJogosRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedAdminRoute: AuthenticatedAdminRoute,
   AuthenticatedJogosRoute: AuthenticatedJogosRoute,
 }
 
