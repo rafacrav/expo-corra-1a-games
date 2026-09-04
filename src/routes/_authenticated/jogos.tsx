@@ -146,6 +146,14 @@ function HubPage() {
             </div>
           </Link>
           <div className="flex items-center gap-3">
+            {isAdmin && (
+              <Link
+                to="/admin"
+                className="inline-flex items-center gap-1.5 rounded-md border border-border bg-muted px-3 py-1.5 text-xs font-medium text-foreground hover:bg-accent"
+              >
+                <ShieldCheck className="h-3.5 w-3.5" /> Painel
+              </Link>
+            )}
             <div className="hidden text-right sm:block">
               <p className="font-display text-sm text-primary">
                 {profile ? `${profile.first_name} ${profile.last_name}` : "Jogador"}
@@ -154,6 +162,7 @@ function HubPage() {
                 {userId ? userId.slice(0, 13) + "…" : "—"}
               </p>
             </div>
+
             <button
               onClick={handleLogout}
               className="inline-flex items-center gap-1.5 rounded-md border border-border bg-muted px-3 py-1.5 text-xs font-medium text-foreground hover:bg-accent"
