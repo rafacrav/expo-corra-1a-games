@@ -1,5 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import type { DiaryEntry } from "@/components/hub/MathDiary";
+import { AdaptiveBadge } from "@/components/hub/AdaptiveBadge";
+import { useAdaptive } from "@/hooks/useAdaptive";
 
 type Op = "+" | "−" | "×" | "÷" | "^" | "√";
 
@@ -31,33 +33,38 @@ function isCleanInt(n: number | null): n is number {
 
 type Puzzle = { a: number; b: number; op: Op; result: number };
 
-function generate(): Puzzle {
+function generate(round = 1): Puzzle {
+  // Escala de dificuldade: rodada efetiva controla o tamanho dos números
+  // e libera operadores mais complexos aos poucos.
+  const k = Math.min(2, 0.5 + round / 10); // 0.6 → 2
+  const pool: Op[] = round <= 3 ? ["+", "−", "×"] : round <= 7 ? ["+", "−", "×", "÷"] : OPS;
   for (let i = 0; i < 200; i++) {
-    const op = OPS[Math.floor(Math.random() * OPS.length)];
+    const op = pool[Math.floor(Math.random() * pool.length)];
     let a: number, b: number;
     switch (op) {
       case "+":
       case "−":
-        a = 1 + Math.floor(Math.random() * 30);
-        b = 1 + Math.floor(Math.random() * 30);
+        a = 1 + Math.floor(Math.random() * Math.round(15 * k));
+        b = 1 + Math.floor(Math.random() * Math.round(15 * k));
         break;
       case "×":
-        a = 2 + Math.floor(Math.random() * 11);
-        b = 2 + Math.floor(Math.random() * 11);
+        a = 2 + Math.floor(Math.random() * Math.round(6 * k));
+        b = 2 + Math.floor(Math.random() * Math.round(6 * k));
         break;
       case "÷":
-        b = 2 + Math.floor(Math.random() * 9);
-        a = b * (2 + Math.floor(Math.random() * 9));
+        b = 2 + Math.floor(Math.random() * Math.round(5 * k));
+        a = b * (2 + Math.floor(Math.random() * Math.round(5 * k)));
         break;
       case "^":
-        a = 2 + Math.floor(Math.random() * 8);
+        a = 2 + Math.floor(Math.random() * Math.round(4 * k));
         b = 2 + Math.floor(Math.random() * 3);
         break;
       case "√":
         b = 2 + Math.floor(Math.random() * 2); // raiz 2 ou 3
-        a = Math.pow(2 + Math.floor(Math.random() * 6), b);
+        a = Math.pow(2 + Math.floor(Math.random() * Math.round(3 * k)), b);
         break;
     }
+
     const r = apply(a, op, b);
     if (!isCleanInt(r)) continue;
     const result = Math.round(r);
@@ -85,8 +92,9 @@ export function OperadorGame({
 }: {
   pushDiary: (e: Omit<DiaryEntry, "id" | "at">) => void;
 }) {
+  const adaptive = useAdaptive("operador");
   const [round, setRound] = useState(1);
-  const [puzzle, setPuzzle] = useState<Puzzle>(() => generate());
+  const [puzzle, setPuzzle] = useState<Puzzle>(() => generate(1));
   const [picked, setPicked] = useState<Op | null>(null);
   const [score, setScore] = useState({ acertos: 0, erros: 0 });
   const [reveal, setReveal] = useState(false);
@@ -97,7 +105,7 @@ export function OperadorGame({
   const [lastTime, setLastTime] = useState<number | null>(null);
   const [won, setWon] = useState(false);
 
-  const maxTime = maxTimeForRound(round);
+  const maxTime = adaptive.timeFor(maxTimeForRound(adaptive.roundFor(round)));
 
   const next = useCallback(() => {
     if (round >= MAX_ROUNDS) {
@@ -105,7 +113,7 @@ export function OperadorGame({
       return;
     }
     setRound((r) => r + 1);
-    setPuzzle(generate());
+    setPuzzle(generate(adaptive.roundFor(round + 1)));
     setPicked(null);
     setReveal(false);
     setStartedAt(Date.now());
@@ -114,8 +122,9 @@ export function OperadorGame({
   }, [round]);
 
   const restart = useCallback(() => {
+    adaptive.reset();
     setRound(1);
-    setPuzzle(generate());
+    setPuzzle(generate(1));
     setPicked(null);
     setReveal(false);
     setScore({ acertos: 0, erros: 0 });
@@ -145,6 +154,7 @@ export function OperadorGame({
       setReveal(true);
       setScore((s) => ({ acertos: s.acertos, erros: s.erros + 1 }));
       setStreak(0);
+      adaptive.record({ round, correct: false, timedOut: true, seconds: maxTime, maxSeconds: maxTime });
       pushDiary({
         game: "Operador",
         formula: `${puzzle.a} ? ${puzzle.b} = ${puzzle.result}`,
@@ -160,6 +170,7 @@ export function OperadorGame({
     setPicked(op);
     setReveal(true);
     const ok = op === puzzle.op;
+    adaptive.record({ round, correct: ok, timedOut: false, seconds: elapsed, maxSeconds: maxTime });
     setScore((s) => ({
       acertos: s.acertos + (ok ? 1 : 0),
       erros: s.erros + (ok ? 0 : 1),
@@ -243,6 +254,7 @@ export function OperadorGame({
     <div className="grid gap-4 xl:grid-cols-[1fr_320px]">
       {/* Painel principal */}
       <div className="rounded-xl border border-border bg-card p-6">
+        <AdaptiveBadge profile={adaptive.profile} thinking={adaptive.thinking} />
         <div className="flex items-center justify-between gap-3">
           <span className="font-mono text-xs uppercase tracking-widest text-muted-foreground">
             Descubra o operador
