@@ -10,6 +10,7 @@ import {
   LogOut,
   Move,
   Scale,
+  ShieldCheck,
   ShoppingCart,
   Sparkles,
   Target,
