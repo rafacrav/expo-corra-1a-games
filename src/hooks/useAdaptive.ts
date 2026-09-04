@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { adaptDifficulty } from "@/lib/adaptive.functions";
+import { saveGameSession } from "@/lib/sessions.functions";
 import {
   DEFAULT_ADAPTIVE,
   clampLevel,
@@ -16,10 +17,15 @@ const EVERY = 3; // consulta a IA a cada N rodadas
 
 export function useAdaptive(game: string) {
   const ask = useServerFn(adaptDifficulty);
+  const save = useServerFn(saveGameSession);
   const [profile, setProfile] = useState<AdaptiveProfile>(DEFAULT_ADAPTIVE);
   const [thinking, setThinking] = useState(false);
   const historyRef = useRef<RoundResult[]>([]);
   const askedRef = useRef(false);
+  const sessionIdRef = useRef<string | null>(null);
+  const savingRef = useRef(false);
+  const startedRef = useRef<number>(Date.now());
+
 
   const call = useCallback(
     async (currentLevel: number) => {
