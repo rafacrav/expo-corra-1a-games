@@ -15,7 +15,8 @@ import {
 
 const EVERY = 3; // consulta a IA a cada N rodadas
 
-export function useAdaptive(game: string) {
+export function useAdaptive(game: string, options: { guest?: boolean } = {}) {
+  const guest = options.guest ?? false;
   const ask = useServerFn(adaptDifficulty);
   const save = useServerFn(saveGameSession);
   const [profile, setProfile] = useState<AdaptiveProfile>(DEFAULT_ADAPTIVE);
@@ -31,6 +32,7 @@ export function useAdaptive(game: string) {
 
   const call = useCallback(
     async (currentLevel: number) => {
+      if (guest) return;
       setThinking(true);
       try {
         const out = await ask({
@@ -49,18 +51,20 @@ export function useAdaptive(game: string) {
         setThinking(false);
       }
     },
-    [ask, game],
+    [ask, game, guest],
   );
 
   // Calibração inicial pelo perfil do cadastro
   useEffect(() => {
+    if (guest) return;
     if (askedRef.current) return;
     askedRef.current = true;
     void call(DEFAULT_ADAPTIVE.level);
-  }, [call]);
+  }, [call, guest]);
 
   const persist = useCallback(
     async (level: number) => {
+      if (guest) return;
       if (savingRef.current) return;
       savingRef.current = true;
       try {
@@ -84,7 +88,7 @@ export function useAdaptive(game: string) {
         savingRef.current = false;
       }
     },
-    [game, save],
+    [game, guest, save],
   );
 
   const record = useCallback(
@@ -105,14 +109,14 @@ export function useAdaptive(game: string) {
         void persist(next.level);
         return next;
       });
-      if (historyRef.current.length % EVERY === 0) {
+      if (!guest && historyRef.current.length % EVERY === 0) {
         setProfile((prev) => {
           void call(prev.level);
           return prev;
         });
       }
     },
-    [call, persist],
+    [call, guest, persist],
   );
 
   const reset = useCallback(() => {
@@ -121,8 +125,8 @@ export function useAdaptive(game: string) {
     sessionIdRef.current = null;
     startedRef.current = Date.now();
     setProfile(DEFAULT_ADAPTIVE);
-    void call(DEFAULT_ADAPTIVE.level);
-  }, [call]);
+    if (!guest) void call(DEFAULT_ADAPTIVE.level);
+  }, [call, guest]);
 
 
   return {

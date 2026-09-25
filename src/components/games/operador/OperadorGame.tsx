@@ -89,10 +89,12 @@ function maxTimeForRound(round: number) {
 
 export function OperadorGame({
   pushDiary,
+  demo = false,
 }: {
   pushDiary: (e: Omit<DiaryEntry, "id" | "at">) => void;
+  demo?: boolean;
 }) {
-  const adaptive = useAdaptive("operador");
+  const adaptive = useAdaptive("operador", { guest: demo });
   const [round, setRound] = useState(1);
   const [puzzle, setPuzzle] = useState<Puzzle>(() => generate(1));
   const [picked, setPicked] = useState<Op | null>(null);
