@@ -12,6 +12,8 @@ export const Route = createFileRoute("/")({
       },
       { property: "og:title", content: "ExpoCorra — Matemática que se joga" },
       { property: "og:description", content: "7 jogos. Probabilidade, Pitágoras, MRU, parábola e mais — para a feira de ciências." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
     ],
   }),
   component: LandingPage,

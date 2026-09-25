@@ -48,6 +48,13 @@ export const Route = createFileRoute("/_authenticated/admin")({
         name: "description",
         content: "Acompanhe os participantes e o desempenho nos jogos da ExpoCorra.",
       },
+      { property: "og:title", content: "Painel do organizador — ExpoCorra" },
+      {
+        property: "og:description",
+        content: "Acompanhe os participantes e o desempenho nos jogos da ExpoCorra.",
+      },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
     ],
   }),
   component: AdminPage,

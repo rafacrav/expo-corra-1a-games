@@ -8,6 +8,10 @@ export const Route = createFileRoute("/auth")({
     meta: [
       { title: "Entrar — ExpoCorra" },
       { name: "description", content: "Acesse sua conta ExpoCorra para jogar." },
+      { property: "og:title", content: "Entrar — ExpoCorra" },
+      { property: "og:description", content: "Acesse sua conta ExpoCorra para jogar." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
     ],
   }),
   component: AuthPage,

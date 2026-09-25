@@ -9,6 +9,10 @@ export const Route = createFileRoute("/cadastro")({
     meta: [
       { title: "Cadastro — ExpoCorra" },
       { name: "description", content: "Crie sua conta na ExpoCorra e receba seu QR code único." },
+      { property: "og:title", content: "Cadastro — ExpoCorra" },
+      { property: "og:description", content: "Crie sua conta na ExpoCorra e receba seu QR code único." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
     ],
   }),
   component: CadastroPage,
