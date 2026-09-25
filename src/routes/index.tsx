@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Album, Calculator, GraduationCap, Move, QrCode, Scale, ShoppingCart, Sparkles, Target } from "lucide-react";
+import { Album, Calculator, Gamepad2, GraduationCap, Move, QrCode, Scale, ShoppingCart, Sparkles, Target } from "lucide-react";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -12,6 +12,8 @@ export const Route = createFileRoute("/")({
       },
       { property: "og:title", content: "ExpoCorra — Matemática que se joga" },
       { property: "og:description", content: "7 jogos. Probabilidade, Pitágoras, MRU, parábola e mais — para a feira de ciências." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
     ],
   }),
   component: LandingPage,
@@ -45,6 +47,12 @@ function LandingPage() {
             </div>
           </div>
           <div className="flex items-center gap-2">
+            <Link
+              to="/demo"
+              className="hidden rounded-md border border-primary/30 bg-primary/10 px-3 py-1.5 text-xs font-medium text-primary hover:bg-primary/15 sm:inline-flex sm:text-sm"
+            >
+              Jogar demo
+            </Link>
             <Link
               to="/auth"
               className="rounded-md border border-border bg-muted px-3 py-1.5 text-xs font-medium text-foreground hover:bg-accent sm:text-sm"
@@ -80,8 +88,14 @@ function LandingPage() {
               </p>
               <div className="mt-7 flex flex-wrap gap-3">
                 <Link
-                  to="/cadastro"
+                  to="/demo"
                   className="inline-flex items-center gap-2 rounded-lg bg-primary px-5 py-3 font-display text-base font-semibold text-primary-foreground shadow-glow-green transition hover:scale-[1.02] hover:bg-primary/90"
+                >
+                  Jogar demo grátis <Gamepad2 className="h-4 w-4" />
+                </Link>
+                <Link
+                  to="/cadastro"
+                  className="inline-flex items-center gap-2 rounded-lg border border-border bg-card px-5 py-3 font-display text-base font-semibold text-foreground hover:bg-accent"
                 >
                   Fazer cadastro <QrCode className="h-4 w-4" />
                 </Link>

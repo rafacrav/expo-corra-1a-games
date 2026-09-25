@@ -32,6 +32,10 @@ export const Route = createFileRoute("/_authenticated/jogos")({
     meta: [
       { title: "Jogos — ExpoCorra" },
       { name: "description", content: "Hub de jogos de matemática e física da ExpoCorra." },
+      { property: "og:title", content: "Jogos — ExpoCorra" },
+      { property: "og:description", content: "Hub de jogos de matemática e física da ExpoCorra." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
     ],
   }),
   component: HubPage,
